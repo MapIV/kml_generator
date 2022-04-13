@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>kml_generator</name>
+  <version>1.0.0</version>
+  <description>
+    KML generator package
+  </description>
+  <maintainer email="aoki.takanose@tier4.jp">Aoki-Takanose</maintainer>
+  <author>Aoki Takanose</author>
+  <license>TODO</license>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <build_depend>sensor_msgs</build_depend>
+  <build_export_depend>sensor_msgs</build_export_depend>
+  <exec_depend>sensor_msgs</exec_depend>
+
+  <export>
+    <!-- metapackage/-->
+  </export>
+</package>
