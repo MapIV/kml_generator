@@ -4,7 +4,7 @@ KmlGenerator::KmlGenerator()
 {
   kml_file_ofs.open(file_name_, std::ios::out);
   std::cout << "Output file = " << file_name_ << std::endl;
-  initKml();
+  initKml("eagleye");
 }
 
 KmlGenerator::KmlGenerator(std::string file_name)
@@ -12,20 +12,20 @@ KmlGenerator::KmlGenerator(std::string file_name)
   file_name_ = file_name;
   kml_file_ofs.open(file_name_, std::ios::out);
   std::cout << "Output file = " << file_name_ << std::endl;
-  initKml();
+  initKml("eagleye");
 
 }
 
-void KmlGenerator::initKml()
+void KmlGenerator::initKml(std::string name)
 {
    header =
       "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
       "<kml xmlns=\"http://earth.google.com/kml/2.2\">\n"
       "<Document>\n"
-      "<name> eagleye </name>\n\n"
+      "<name>"+ name +"</name>\n\n"
 
       "<ScreenOverlay>\n"
-      "\t<name>Eagleye Logo</name>\n"
+      "\t<name>"+ name +" logo</name>\n"
       "\t<visibility>1</visibility>\n"
       "\t<Icon>\n"
       "\t\t<href>https://github.com/MapIV/eagleye/blob/master/docs/logo.png?raw=true</href>\n"

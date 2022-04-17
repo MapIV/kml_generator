@@ -15,7 +15,7 @@ public:
   KmlGenerator();
   KmlGenerator(std::string file_name);
 
-  void initKml();
+  void initKml(std::string name);
   bool addNavSatFixMsg(std::vector<sensor_msgs::NavSatFix>, std::string data_name);
   bool addNavSatFixMsg(std::vector<sensor_msgs::NavSatFix>);
   std::string NavSatFixMsgtoStr(std::vector<sensor_msgs::NavSatFix>);
