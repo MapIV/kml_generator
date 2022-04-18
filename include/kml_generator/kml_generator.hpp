@@ -28,11 +28,11 @@ private:
   // Variables
   std::string file_name_ = "output.kml";
   std::string log_link_url_;
-  std::ofstream kml_file_ofs;
-  std::string header;
-  std::string body;
-  std::string footer;
-  int data_count = 0;
+  std::ofstream kml_file_ofs_;
+  std::string header_;
+  std::string body_;
+  std::string footer_;
+  int data_count_ = 0;
 
   std::string color_list[8] 
     = {"ff0000ff","ff00ff00","ffff0000","ffff55aa","ffffff00","ff7700ff","ff00aaff","ffffffff"};

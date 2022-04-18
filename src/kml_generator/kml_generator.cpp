@@ -2,7 +2,7 @@
 
 KmlGenerator::KmlGenerator()
 {
-  kml_file_ofs.open(file_name_, std::ios::out);
+  kml_file_ofs_.open(file_name_, std::ios::out);
   std::cout << "Output file = " << file_name_ << std::endl;
   initKml(file_name_);
 }
@@ -10,7 +10,7 @@ KmlGenerator::KmlGenerator()
 KmlGenerator::KmlGenerator(std::string file_name)
 {
   file_name_ = file_name;
-  kml_file_ofs.open(file_name_, std::ios::out);
+  kml_file_ofs_.open(file_name_, std::ios::out);
   std::cout << "Output file = " << file_name_ << std::endl;
   initKml(file_name_);
 }
@@ -19,7 +19,7 @@ KmlGenerator::KmlGenerator(std::string file_name, std::string log_link_url)
 {
   file_name_ = file_name;
   log_link_url_ = log_link_url;
-  kml_file_ofs.open(file_name_, std::ios::out);
+  kml_file_ofs_.open(file_name_, std::ios::out);
   std::cout << "Output file = " << file_name_ << std::endl;
   initKml(file_name_);
 
@@ -27,7 +27,7 @@ KmlGenerator::KmlGenerator(std::string file_name, std::string log_link_url)
 
 void KmlGenerator::initKml(std::string name)
 {
-   header =
+   header_ =
       "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
       "<kml xmlns=\"http://earth.google.com/kml/2.2\">\n"
       "<Document>\n"
@@ -47,7 +47,7 @@ void KmlGenerator::initKml(std::string name)
       )
       ;
     
-   footer =
+   footer_ =
       "</Document>\n"
       "</kml>\n";
 }
@@ -55,7 +55,7 @@ void KmlGenerator::initKml(std::string name)
 bool KmlGenerator::addKmlHeader(std::string data_name)
 {
   std::string tmp_header;
-  std::string color_str = color_list[(data_count-1)%8];
+  std::string color_str = color_list[(data_count_-1)%8];
   tmp_header =
       "<Style id=\" " + data_name + "\">\n"
       "\t<LineStyle>\n"
@@ -63,7 +63,7 @@ bool KmlGenerator::addKmlHeader(std::string data_name)
       "\t\t<width>5.00</width>\n"
       "\t</LineStyle>\n"
       "</Style>\n\n";
-  header +=tmp_header;
+  header_ +=tmp_header;
 
   return true;
 }
@@ -86,7 +86,7 @@ bool KmlGenerator::addKmlBody(std::string data_name, std::string data_str)
       "\t\t</coordinates>\n"
       "\t</LineString>\n"
       "\t</Placemark>\n\n";
-  body +=tmp_body;
+  body_ +=tmp_body;
 
   return true;
 }
@@ -120,8 +120,8 @@ bool KmlGenerator::addNavSatFixMsg(std::vector<sensor_msgs::NavSatFix> fix_msg)
   std::string data_str = NavSatFixMsgtoStr(fix_msg);
   std::string data_name;
 
-  data_count++;
-  data_name = "DataNum " + std::to_string(data_count);
+  data_count_++;
+  data_name = "DataNum " + std::to_string(data_count_);
 
   if (!addKmlHeader(data_name)) return false;
   if (!addKmlBody(data_name,data_str)) return false;
@@ -132,7 +132,7 @@ bool KmlGenerator::addNavSatFixMsg(std::vector<sensor_msgs::NavSatFix> fix_msg, 
 {
   std::string data_str = NavSatFixMsgtoStr(fix_msg);
 
-  data_count++;
+  data_count_++;
   if (!addKmlHeader(data_name)) return false;
   if (!addKmlBody(data_name, data_str)) return false;
   return true;
@@ -140,7 +140,7 @@ bool KmlGenerator::addNavSatFixMsg(std::vector<sensor_msgs::NavSatFix> fix_msg, 
 
 bool KmlGenerator::outputKml()
 {
-  kml_file_ofs << header << body <<  footer << std::endl;
+  kml_file_ofs_ << header_ << body_ <<  footer_ << std::endl;
 
   return true;
 }
