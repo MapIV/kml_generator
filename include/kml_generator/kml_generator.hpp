@@ -14,11 +14,12 @@ class KmlGenerator
 public:
   KmlGenerator();
   KmlGenerator(std::string file_name);
+  KmlGenerator(std::string file_name, std::string log_link_url);
 
   void initKml(std::string name);
+
   bool addNavSatFixMsg(std::vector<sensor_msgs::NavSatFix>, std::string data_name);
   bool addNavSatFixMsg(std::vector<sensor_msgs::NavSatFix>);
-  std::string NavSatFixMsgtoStr(std::vector<sensor_msgs::NavSatFix>);
   bool addKmlHeader(std::string data_name);
   bool addKmlBody(std::string data_name, std::string data_str);
   bool outputKml();
@@ -26,6 +27,7 @@ public:
 private:
   // Variables
   std::string file_name_ = "output.kml";
+  std::string log_link_url_;
   std::ofstream kml_file_ofs;
   std::string header;
   std::string body;
@@ -36,6 +38,7 @@ private:
     = {"ff0000ff","ff00ff00","ffff0000","ffff55aa","ffffff00","ff7700ff","ff00aaff","ffffffff"};
     //    Red        Green      Blue      Purple      Cyan      Magenta    Orange      White
   
+  std::string NavSatFixMsgtoStr(std::vector<sensor_msgs::NavSatFix>&);
 
 };
 

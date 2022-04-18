@@ -26,3 +26,15 @@ include_directories(
 add_library(kml_generator src/kml_generator/kml_generator.cpp)
 target_link_libraries(kml_generator ${catkin_LIBRARIES})
 add_dependencies(kml_generator ${catkin_EXPORTED_TARGETS})
+
+
+add_executable(fixcsv2kml
+  sample/fixcsv2kml.cpp
+)
+add_dependencies(fixcsv2kml
+kml_generator
+)
+target_link_libraries(fixcsv2kml
+  ${catkin_LIBRARIES}
+  kml_generator
+)

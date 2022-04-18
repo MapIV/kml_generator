@@ -4,7 +4,7 @@ KmlGenerator::KmlGenerator()
 {
   kml_file_ofs.open(file_name_, std::ios::out);
   std::cout << "Output file = " << file_name_ << std::endl;
-  initKml("eagleye");
+  initKml(file_name_);
 }
 
 KmlGenerator::KmlGenerator(std::string file_name)
@@ -12,7 +12,16 @@ KmlGenerator::KmlGenerator(std::string file_name)
   file_name_ = file_name;
   kml_file_ofs.open(file_name_, std::ios::out);
   std::cout << "Output file = " << file_name_ << std::endl;
-  initKml("eagleye");
+  initKml(file_name_);
+}
+
+KmlGenerator::KmlGenerator(std::string file_name, std::string log_link_url)
+{
+  file_name_ = file_name;
+  log_link_url_ = log_link_url;
+  kml_file_ofs.open(file_name_, std::ios::out);
+  std::cout << "Output file = " << file_name_ << std::endl;
+  initKml(file_name_);
 
 }
 
@@ -23,17 +32,20 @@ void KmlGenerator::initKml(std::string name)
       "<kml xmlns=\"http://earth.google.com/kml/2.2\">\n"
       "<Document>\n"
       "<name>"+ name +"</name>\n\n"
-
+      +(
+      log_link_url_.empty() ? "":
       "<ScreenOverlay>\n"
       "\t<name>"+ name +" logo</name>\n"
       "\t<visibility>1</visibility>\n"
       "\t<Icon>\n"
-      "\t\t<href>https://github.com/MapIV/eagleye/blob/master/docs/logo.png?raw=true</href>\n"
+      + "\t\t<href>" + log_link_url_ + "?raw=true</href>\n" +
       "\t</Icon>\n"
       "\t<overlayXY x=\"-0.3\" y=\"-1\" xunits=\"fraction\" yunits=\"fraction\"/>\n"
       "\t<screenXY x=\"0\" y=\"0\" xunits=\"fraction\" yunits=\"fraction\"/>\n"
       "\t<size x=\"260.6\" y=\"56.0\" xunits=\"pixels\" yunits=\"pixels\"/>\n"
-      "</ScreenOverlay>\n\n";
+      "</ScreenOverlay>\n\n"
+      )
+      ;
     
    footer =
       "</Document>\n"
@@ -79,7 +91,7 @@ bool KmlGenerator::addKmlBody(std::string data_name, std::string data_str)
   return true;
 }
 
-std::string KmlGenerator::NavSatFixMsgtoStr(std::vector<sensor_msgs::NavSatFix> fix_msg)
+std::string KmlGenerator::NavSatFixMsgtoStr(std::vector<sensor_msgs::NavSatFix>& fix_msg)
 {
   std::stringstream data_ss;
   std::size_t data_length = std::distance(fix_msg.begin(), fix_msg.end());
