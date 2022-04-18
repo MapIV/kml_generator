@@ -18,10 +18,14 @@ public:
 
   void initKml(std::string name);
 
-  bool addNavSatFixMsg(std::vector<sensor_msgs::NavSatFix>, std::string data_name);
-  bool addNavSatFixMsg(std::vector<sensor_msgs::NavSatFix>);
-  bool addKmlHeader(std::string data_name);
-  bool addKmlBody(std::string data_name, std::string data_str);
+  bool addNavSatFixMsgVectorLine(const std::vector<sensor_msgs::NavSatFix>&, std::string data_name);
+  bool addNavSatFixMsgVectorLine(const std::vector<sensor_msgs::NavSatFix>&);
+  bool addNavSatFixMsgVectorPoint(const std::vector<sensor_msgs::NavSatFix>&, std::string data_name);
+  bool addNavSatFixMsgVectorPoint(const std::vector<sensor_msgs::NavSatFix>&);
+  bool addKmlLineHeader(std::string data_name);
+  bool addKmlPointHeader(std::string data_name);
+  bool addKmlLineBody(std::string data_name, std::string data_str);
+  bool addKmlPointBody(std::string data_str);
   bool outputKml();
 
 private:
@@ -38,7 +42,9 @@ private:
     = {"ff0000ff","ff00ff00","ffff0000","ffff55aa","ffffff00","ff7700ff","ff00aaff","ffffffff"};
     //    Red        Green      Blue      Purple      Cyan      Magenta    Orange      White
   
-  std::string NavSatFixMsgtoStr(std::vector<sensor_msgs::NavSatFix>&);
+  std::string NavSatFixMsgVector2LineStr(const std::vector<sensor_msgs::NavSatFix>&);
+  std::string NavSatFixMsg2PointStr(const sensor_msgs::NavSatFix, std::string data_name);
+  std::string NavSatFixMsgVector2PointStr(const std::vector<sensor_msgs::NavSatFix>&, std::string data_name);
 
 };
 

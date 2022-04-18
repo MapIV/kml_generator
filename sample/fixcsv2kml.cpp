@@ -93,7 +93,8 @@ int main(int argc, char** argv) {
   std::string log_link_url = "https://github.com/MapIV/eagleye/blob/main-ros1/docs/logo.png";
   KmlGenerator kml_generator(kml_name, log_link_url);
 
-  kml_generator.addNavSatFixMsg(vector_fix);
+  //kml_generator.addNavSatFixMsgVectorLine(vector_fix);
+  kml_generator.addNavSatFixMsgVectorPoint(vector_fix);
 
   kml_generator.outputKml();
 
