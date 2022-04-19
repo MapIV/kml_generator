@@ -12,6 +12,7 @@
 struct PointInfomation
 {
 public:
+  int seq = 0;
   double time;
   double latitude;
   double longitude;
@@ -49,7 +50,13 @@ public:
     DISTANCE_INTERBAL = 1,
   };
 
-  void setIntervalType(const IntervalType i);
+  enum class KMLType
+  {
+    POINT = 0,
+    LINE = 1,
+  };
+
+  void setIntervalType(const IntervalType ip);
   void setTimeInterval(const double time_interval);
   void setPointInterval(const double point_interval);
   void setLineInterval(const double line_interval);
@@ -65,6 +72,8 @@ private:
   int data_count_ = 0;
 
   IntervalType interval_type_ = IntervalType::TIME_INTERBAL; // time : 0, distance: 1
+  KMLType kml_type_;
+  std::string data_name_;
   double time_interval_ = 0.2; // [sec]
   double point_interval_ = 1.0; // [m]
   double line_interval_ = 1.0; // [m]
@@ -78,12 +87,12 @@ private:
   bool addKmlLineHeader(std::string data_name);
   bool addKmlLineBody(std::string data_name, std::string data_str);
   bool addKmlPointBody(std::string data_name, std::string data_str);
-  // void LLH2StringSteamInCondition(std::stringstream & data_ss,double & time_last, double ecef_pose_last[3],
-  // const double time, double llh[3]);
+
   void LLH2StringInCondition(std::string & str,double & time_last, double ecef_pose_last[3],
-  const double time, double llh[3]);
+  const double time, double llh[3], int seq);
+
   std::string NavSatFixMsgVector2LineStr(const std::vector<sensor_msgs::NavSatFix>&);
-  std::string NavSatFixMsg2PointStr(const sensor_msgs::NavSatFix, std::string data_name);
+  std::string NavSatFixMsg2PointStr(const int seq,const double time, double llh[3], const int sequence);
   std::string NavSatFixMsgVector2PointStr(const std::vector<sensor_msgs::NavSatFix>&, std::string data_name);
 
   std::string PointInfomationVector2LineStr(const std::vector<PointInfomation>&);

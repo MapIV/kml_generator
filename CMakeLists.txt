@@ -23,7 +23,10 @@ include_directories(
   ${catkin_INCLUDE_DIRS}
 )
 
-add_library(kml_generator src/kml_generator/kml_generator.cpp)
+add_library(kml_generator
+  src/kml_generator/kml_generator_core.cpp
+  src/kml_generator/llh2xyz.cpp
+)
 target_link_libraries(kml_generator ${catkin_LIBRARIES})
 add_dependencies(kml_generator ${catkin_EXPORTED_TARGETS})
 

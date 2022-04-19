@@ -49,6 +49,7 @@ std::vector<PointInfomation> EagleyeLogCsvtoVector(std::string csv_name)
 
     std::vector<std::string> str_vec = split(line, ',');
 
+    tmp_eagleye.seq = cnt;
     tmp_eagleye.time = str2ROSTime(str_vec.at(0)).toSec();
     tmp_eagleye.latitude = std::stod(str_vec.at(107));
     tmp_eagleye.longitude = std::stod(str_vec.at(108));
@@ -78,13 +79,11 @@ int main(int argc, char** argv) {
   std::string logo_link_url = "https://github.com/MapIV/eagleye/blob/main-ros1/docs/logo.png";
   KmlGenerator kml_generator(kml_name, logo_name, logo_link_url);
 
-  kml_generator.setTimeInterval(0.1);
-  kml_generator.addPointInfomationVectorLine(vector_point_information, "Eagleye Line");
-
-  // kml_generator.addPointInfomationVectorPoint(vector_point_information, "Eagleye Point1");
-
-  // kml_generator.setIntervalType(KmlGenerator::IntervalType::DISTANCE_INTERBAL);
-  // kml_generator.setLineInterval(2.0);
+  // kml_generator.setTimeInterval(0.1);
+  // kml_generator.addPointInfomationVectorLine(vector_point_information, "Eagleye Line");
+  kml_generator.setIntervalType(KmlGenerator::IntervalType::DISTANCE_INTERBAL);
+  kml_generator.setLineInterval(2.0);
+  kml_generator.addPointInfomationVectorPoint(vector_point_information, "Eagleye Point1");
   // kml_generator.addPointInfomationVectorPoint(vector_point_information, "Eagleye Point2");
 
   kml_generator.outputKml();
