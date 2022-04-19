@@ -55,7 +55,7 @@ void KmlGenerator::initKml(std::string name)
 bool KmlGenerator::addKmlLineHeader(std::string data_name)
 {
   std::string tmp_header;
-  std::string color_str = color_list[(data_count_-1)%8];
+  std::string color_str = color_list[(data_count_)%8];
   tmp_header =
       "<Style id=\"" + data_name + "\">\n"
       "\t<LineStyle>\n"
@@ -93,7 +93,7 @@ bool KmlGenerator::addKmlLineBody(std::string data_name, std::string data_str)
 
 bool KmlGenerator::addKmlPointBody(std::string data_name, std::string data_str)
 {
-  std::string color_str = color_list[(data_count_-1)%8];
+  std::string color_str = color_list[(data_count_)%8];
   body_ +=  
           "<open>1</open>\n"
          "\t<Style id=\"" + data_name + "\">\n"
@@ -128,11 +128,13 @@ std::string KmlGenerator::NavSatFixMsgVector2LineStr(const std::vector<sensor_ms
   std::stringstream data_ss;
   std::size_t data_length = std::distance(fix_msg_vector.begin(), fix_msg_vector.end());
 
+  double time_interval = 0.2;
+
   double time_last = 0;
   for (int i=0; i<data_length; i++)
   {
     if(fix_msg_vector[i].header.stamp.toSec() != time_last
-      && fix_msg_vector[i].header.stamp.toSec() - time_last > 0.2
+      && fix_msg_vector[i].header.stamp.toSec() - time_last > time_interval
       && fix_msg_vector[i].longitude != 0 && fix_msg_vector[i].latitude != 0)
     {
       data_ss << std::setprecision(std::numeric_limits<double>::max_digits10) 
@@ -207,12 +209,9 @@ bool KmlGenerator::addNavSatFixMsgVectorLine(const std::vector<sensor_msgs::NavS
   std::string data_str = NavSatFixMsgVector2LineStr(fix_msg_vector);
   std::string data_name;
 
-  data_count_++;
   data_name = "DATANUM_" + std::to_string(data_count_);
 
-  if (!addKmlLineHeader(data_name)) return false;
-  if (!addKmlLineBody(data_name,data_str)) return false;
-  return true;
+  return addNavSatFixMsgVectorLine(fix_msg_vector, data_name);
 }
 
 bool KmlGenerator::addNavSatFixMsgVectorLine(const std::vector<sensor_msgs::NavSatFix>& fix_msg_vector, std::string data_name)
@@ -231,13 +230,9 @@ bool KmlGenerator::addNavSatFixMsgVectorPoint(const std::vector<sensor_msgs::Nav
 
   std::string data_name;
 
-  data_count_++;
   data_name = "DATANUM_" + std::to_string(data_count_);
 
-  std::string data_str = NavSatFixMsgVector2PointStr(fix_msg_vector, data_name);
-
-  if (!addKmlPointBody(data_name, data_str)) return false;
-  return true;
+  return addNavSatFixMsgVectorPoint(fix_msg_vector, data_name);
 }
 
 bool KmlGenerator::addNavSatFixMsgVectorPoint(const std::vector<sensor_msgs::NavSatFix>& fix_msg_vector, std::string data_name)
@@ -257,4 +252,30 @@ bool KmlGenerator::outputKml()
   kml_file_ofs_ << header_ << body_ <<  footer_ << std::endl;
 
   return true;
+}
+
+// Ref:eagleye(BSD3 License)
+// https://github.com/MapIV/eagleye/blob/main-ros1/eagleye_core/coordinate/src/llh2xyz.cpp
+void KmlGenerator::llh2xyz(double llh_pos[3], double ecef_pos[3])
+{
+  double semi_major_axis = 6378137.0000;
+  double semi_minor_axis = 6356752.3142;
+  double a1 = sqrt (1-pow((semi_minor_axis/semi_major_axis), 2.0));
+  double a2 = a1 * a1;
+
+  double phi = llh_pos[0];
+  double lam = llh_pos[1];
+  double hei = llh_pos[2];
+
+  double sin_phi = sin(phi);
+  double cos_phi = cos(phi);
+  double cos_lam = cos(lam);
+  double sin_lam = sin(lam);
+
+  double tmp1 = 1 - a2;
+  double tmp2 = sqrt(1 - a2*sin_phi*sin_phi);
+
+  ecef_pos[0] = (semi_major_axis/tmp2 + hei)*cos_lam*cos_phi;
+  ecef_pos[1] = (semi_major_axis/tmp2 + hei)*sin_lam*cos_phi;
+  ecef_pos[2] = (semi_major_axis/tmp2*tmp1 + hei)*sin_phi;
 }

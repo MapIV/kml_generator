@@ -44,7 +44,9 @@ private:
   bool addKmlPointBody(std::string data_name, std::string data_str);
   std::string NavSatFixMsgVector2LineStr(const std::vector<sensor_msgs::NavSatFix>&);
   std::string NavSatFixMsg2PointStr(const sensor_msgs::NavSatFix, std::string data_name);
-  std::string NavSatFixMsgVector2PointStr(const std::vector<sensor_msgs::NavSatFix>&, std::string data_name);  
+  std::string NavSatFixMsgVector2PointStr(const std::vector<sensor_msgs::NavSatFix>&, std::string data_name);
+
+  void llh2xyz(double*, double*);
 
 };
 
