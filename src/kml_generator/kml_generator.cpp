@@ -68,17 +68,34 @@ bool KmlGenerator::addKmlLineHeader(std::string data_name)
   return true;
 }
 
-bool KmlGenerator::addKmlPointHeader(std::string data_name)
+bool KmlGenerator::addKmlLineBody(std::string data_name, std::string data_str)
 {
-  std::string tmp_header;
+  std::string tmp_body;
+  tmp_body =
+      "\t<Placemark>\n"
+      "\t<name> " + data_name + " </name>\n"
+      "\t<visibility>1</visibility>\n"
+      "\t<description><![CDATA[]]></description>\n"
+      "\t<styleUrl>#" + data_name + "</styleUrl>\n"
+      "\t<LineString>\n"
+      "\t\t<extrude>0</extrude>\n"
+      "\t\t<tessellate>1</tessellate>\n"
+      "\t\t<altitudeMode>clampToGround</altitudeMode>\n"
+      "\t\t<coordinates>\n"
+      + data_str +
+      "\t\t</coordinates>\n"
+      "\t</LineString>\n"
+      "\t</Placemark>\n\n";
+  body_ += tmp_body;
+
+  return true;
+}
+
+bool KmlGenerator::addKmlPointBody(std::string data_name, std::string data_str)
+{
   std::string color_str = color_list[(data_count_-1)%8];
-  tmp_header =
+  body_ +=  
           "<open>1</open>\n"
-          "<Folder id=\"ID1\">\n"
-          "<name>Screen Overlays</name>\n"
-          "<visibility>0</visibility>\n"
-          "<open>0</open>\n"
-          "</Folder>\n"
          "\t<Style id=\"" + data_name + "\">\n"
           "\t\t<IconStyle>\n"
           "\t\t\t<color>"+ color_str +"</color>\n"
@@ -100,37 +117,11 @@ bool KmlGenerator::addKmlPointHeader(std::string data_name)
           "\t<visibility>1</visibility>\n"
           "\t<open>0</open>"
           ;
-  header_ += tmp_header;
-
-  return true;
-}
-
-bool KmlGenerator::addKmlLineBody(std::string data_name, std::string data_str)
-{
-  std::string tmp_body;
-  tmp_body =
-      "\t<Placemark>\n"
-      "\t<name> " + data_name + " </name>\n"
-      "\t<visibility>1</visibility>\n"
-      "\t<description><![CDATA[]]></description>\n"
-      "\t<styleUrl># " + data_name + "</styleUrl>\n"
-      "\t<LineString>\n"
-      "\t\t<extrude>0</extrude>\n"
-      "\t\t<tessellate>1</tessellate>\n"
-      "\t\t<altitudeMode>clampToGround</altitudeMode>\n"
-      "\t\t<coordinates>\n"
-      + data_str +
-      "\t\t</coordinates>\n"
-      "\t</LineString>\n"
-      "\t</Placemark>\n\n";
-  body_ += tmp_body;
-
-  return true;
-}
-
-bool KmlGenerator::addKmlPointBody(std::string data_str)
-{
+  body_ += "\t<Folder id=\"ID21\">\n"
+    "\t<name> " + data_name + " </name>\n"
+    "\t<visibility>0</visibility>\n";
   body_ += data_str;
+  body_ += "\t</Folder>\n";
   body_ += "\t</Folder>\n";
 
   return true;
@@ -248,8 +239,7 @@ bool KmlGenerator::addNavSatFixMsgVectorPoint(const std::vector<sensor_msgs::Nav
 
   std::string data_str = NavSatFixMsgVector2PointStr(fix_msg_vector, data_name);
 
-  if (!addKmlPointHeader(data_name)) return false;
-  if (!addKmlPointBody(data_str)) return false;
+  if (!addKmlPointBody(data_name, data_str)) return false;
   return true;
 }
 
