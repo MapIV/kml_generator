@@ -25,6 +25,17 @@ public:
 
   bool outputKml();
 
+  enum class IntervalType
+  {
+    TIME_INTERBAL = 0,
+    DISTANCE_INTERBAL = 1,
+  };
+
+  void setIntervalType(const IntervalType i);
+  void setTimeInterval(const double time_interval);
+  void setPointInterval(const double point_interval);
+  void setLineInterval(const double line_interval);
+
 private:
   // Variables
   std::string file_name_ = "output.kml";
@@ -34,6 +45,11 @@ private:
   std::string body_;
   std::string footer_;
   int data_count_ = 0;
+
+  IntervalType interval_type_ = IntervalType::TIME_INTERBAL; // time : 0, distance: 1
+  double time_interval_ = 0.2; // [sec]
+  double point_interval_ = 1.0; // [m]
+  double line_interval_ = 1.0; // [m]
 
   std::string color_list[8] 
     = {"ff0000ff","ff00ff00","ffff0000","ffff55aa","ffffff00","ff7700ff","ff00aaff","ffffffff"};

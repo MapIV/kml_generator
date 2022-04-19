@@ -128,14 +128,27 @@ std::string KmlGenerator::NavSatFixMsgVector2LineStr(const std::vector<sensor_ms
   std::stringstream data_ss;
   std::size_t data_length = std::distance(fix_msg_vector.begin(), fix_msg_vector.end());
 
-  double time_interval = 0.2;
 
   double time_last = 0;
+  double ecef_pose_last[3] = {0, 0, 0};
+  double ecef_pose[3];
   for (int i=0; i<data_length; i++)
   {
-    if(fix_msg_vector[i].header.stamp.toSec() != time_last
-      && fix_msg_vector[i].header.stamp.toSec() - time_last > time_interval
-      && fix_msg_vector[i].longitude != 0 && fix_msg_vector[i].latitude != 0)
+    bool update_flag = false;
+    if(interval_type_ == IntervalType::TIME_INTERBAL)
+    {
+      update_flag = (fix_msg_vector[i].header.stamp.toSec() != time_last && fix_msg_vector[i].header.stamp.toSec() - time_last > time_interval_);
+    }
+    else if (interval_type_ == IntervalType::DISTANCE_INTERBAL)
+    {
+      double llh[3] = {fix_msg_vector[i].latitude, fix_msg_vector[i].longitude , fix_msg_vector[i].altitude};
+      llh2xyz(llh, ecef_pose);
+      double diff_pose[3] ={ecef_pose[0] - ecef_pose_last[0], ecef_pose[1] - ecef_pose_last[1], ecef_pose[2] - ecef_pose_last[2]};
+      double distance = sqrt(pow(diff_pose[0], 2.0) + pow(diff_pose[1], 2.0) + pow(diff_pose[2], 2.0));
+      update_flag = distance > line_interval_;
+    }
+
+    if(update_flag && fix_msg_vector[i].longitude != 0 && fix_msg_vector[i].latitude != 0)
     {
       data_ss << std::setprecision(std::numeric_limits<double>::max_digits10) 
         << fix_msg_vector[i].longitude << ","
@@ -191,13 +204,31 @@ std::string KmlGenerator::NavSatFixMsgVector2PointStr(const std::vector<sensor_m
   std::size_t data_length = std::distance(fix_msg_vector.begin(), fix_msg_vector.end());
 
   double time_last = 0;
+  double ecef_pose_last[3] = {0, 0, 0};
+  double ecef_pose[3];
   for (int i=0; i<data_length; i++)
   {
-    if(fix_msg_vector[i].header.stamp.toSec() != time_last
-      && fix_msg_vector[i].header.stamp.toSec() - time_last > 0.2
-      && fix_msg_vector[i].longitude != 0 && fix_msg_vector[i].latitude != 0)
+    bool update_flag = false;
+    if(interval_type_ == IntervalType::TIME_INTERBAL)
+    {
+      update_flag = (fix_msg_vector[i].header.stamp.toSec() != time_last && fix_msg_vector[i].header.stamp.toSec() - time_last > time_interval_);
+    }
+    else if (interval_type_ == IntervalType::DISTANCE_INTERBAL)
+    {
+      double llh[3] = {fix_msg_vector[i].latitude, fix_msg_vector[i].longitude , fix_msg_vector[i].altitude};
+      llh2xyz(llh, ecef_pose);
+      double diff_pose[3] ={ecef_pose[0] - ecef_pose_last[0], ecef_pose[1] - ecef_pose_last[1], ecef_pose[2] - ecef_pose_last[2]};
+      double distance = sqrt(pow(diff_pose[0], 2.0) + pow(diff_pose[1], 2.0) + pow(diff_pose[2], 2.0));
+      update_flag = distance > point_interval_;
+    }
+
+    if(update_flag && fix_msg_vector[i].longitude != 0 && fix_msg_vector[i].latitude != 0)
     {
       data += NavSatFixMsg2PointStr(fix_msg_vector[i], data_name);
+      time_last = fix_msg_vector[i].header.stamp.toSec();
+      ecef_pose_last[0] = ecef_pose[0];
+      ecef_pose_last[1] = ecef_pose[1];
+      ecef_pose_last[2] = ecef_pose[2];
     }
   }
 
@@ -252,6 +283,26 @@ bool KmlGenerator::outputKml()
   kml_file_ofs_ << header_ << body_ <<  footer_ << std::endl;
 
   return true;
+}
+
+void KmlGenerator::setIntervalType(const IntervalType it)
+{
+  interval_type_ = it;
+}
+
+void KmlGenerator::setTimeInterval(const double time_interval)
+{
+  time_interval_ = time_interval;
+}
+
+void KmlGenerator::setPointInterval(const double point_interval)
+{
+  point_interval_ = point_interval;
+}
+
+void KmlGenerator::setLineInterval(const double line_interval)
+{
+  line_interval_ = line_interval;
 }
 
 // Ref:eagleye(BSD3 License)
