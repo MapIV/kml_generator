@@ -56,9 +56,9 @@ std::vector<sensor_msgs::NavSatFix> NavSatFixMsgCsvtoVector(std::string csv_name
     tmp_fix.status.status = std::stoi(str_vec.at(4));
     tmp_fix.status.service = std::stoi(str_vec.at(5));
  
-    tmp_fix.latitude = std::stof(str_vec.at(6));
-    tmp_fix.longitude = std::stof(str_vec.at(7));
-    tmp_fix.altitude= std::stof(str_vec.at(8));
+    tmp_fix.latitude = std::stod(str_vec.at(6));
+    tmp_fix.longitude = std::stod(str_vec.at(7));
+    tmp_fix.altitude= std::stod(str_vec.at(8));
 
     tmp_fix.position_covariance[0] = std::stof(str_vec.at(9));
     tmp_fix.position_covariance[1] = std::stof(str_vec.at(10));
@@ -74,6 +74,7 @@ std::vector<sensor_msgs::NavSatFix> NavSatFixMsgCsvtoVector(std::string csv_name
     vector_fix.push_back(tmp_fix);
 
     cnt++;
+
   }
   
   return vector_fix;
@@ -94,7 +95,7 @@ int main(int argc, char** argv) {
   std::string logo_link_url = "https://github.com/MapIV/eagleye/blob/main-ros1/docs/logo.png";
   KmlGenerator kml_generator(kml_name, logo_name, logo_link_url);
 
-  kml_generator.setTimeInterval(0.3);
+  kml_generator.setTimeInterval(0.1);
   kml_generator.addNavSatFixMsgVectorLine(vector_fix, "GNSS Line");
 
   kml_generator.addNavSatFixMsgVectorPoint(vector_fix, "GNSS Point1");

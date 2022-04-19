@@ -9,6 +9,22 @@
 
 #include <sensor_msgs/NavSatFix.h>
 
+struct PointInfomation
+{
+public:
+  double time;
+  double latitude;
+  double longitude;
+  double altitude;
+  struct OtherInfo
+  {
+    std::string name;
+    std::string value_str;
+    std::string value_unit;
+  };
+  std::vector<OtherInfo> other_info;
+};
+
 class KmlGenerator
 {
 public:
@@ -16,12 +32,13 @@ public:
   KmlGenerator(std::string file_name);
   KmlGenerator(std::string file_name, std::string logo_name, std::string log_link_url);
 
-  void initKml(std::string name);
-
   bool addNavSatFixMsgVectorLine(const std::vector<sensor_msgs::NavSatFix>&, std::string data_name);
   bool addNavSatFixMsgVectorLine(const std::vector<sensor_msgs::NavSatFix>&);
   bool addNavSatFixMsgVectorPoint(const std::vector<sensor_msgs::NavSatFix>&, std::string data_name);
   bool addNavSatFixMsgVectorPoint(const std::vector<sensor_msgs::NavSatFix>&);
+
+  bool addPointInfomationVectorLine(const std::vector<PointInfomation>&, std::string data_name);
+  bool addPointInfomationVectorLine(const std::vector<PointInfomation>&);
 
   bool outputKml();
 
@@ -55,12 +72,18 @@ private:
     = {"ff0000ff","ff00ff00","ffff0000","ffff55aa","ffffff00","ff7700ff","ff00aaff","ffffffff"};
     //    Red        Green      Blue      Purple      Cyan      Magenta    Orange      White
 
+  void initKml(std::string name);
+
   bool addKmlLineHeader(std::string data_name);
   bool addKmlLineBody(std::string data_name, std::string data_str);
   bool addKmlPointBody(std::string data_name, std::string data_str);
+  void LLH2StringSteamInCondition(std::stringstream & data_ss,double & time_last, double ecef_pose_last[3],
+  const double time, double llh[3]);
   std::string NavSatFixMsgVector2LineStr(const std::vector<sensor_msgs::NavSatFix>&);
   std::string NavSatFixMsg2PointStr(const sensor_msgs::NavSatFix, std::string data_name);
   std::string NavSatFixMsgVector2PointStr(const std::vector<sensor_msgs::NavSatFix>&, std::string data_name);
+
+  std::string PointInfomationVector2LineStr(const std::vector<PointInfomation>&);
 
   void llh2xyz(double*, double*);
 

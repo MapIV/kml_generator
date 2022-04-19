@@ -123,6 +123,38 @@ bool KmlGenerator::addKmlPointBody(std::string data_name, std::string data_str)
   return true;
 }
 
+void KmlGenerator::LLH2StringSteamInCondition(std::stringstream & data_ss,double & time_last, double ecef_pose_last[3],
+  const double time, double llh[3])
+{
+    bool update_flag = false;
+    double ecef_pose[3];
+    if(interval_type_ == IntervalType::TIME_INTERBAL)
+    {
+      update_flag = (time != time_last && time - time_last > time_interval_);
+    }
+    else if (interval_type_ == IntervalType::DISTANCE_INTERBAL)
+    {
+      llh2xyz(llh, ecef_pose);
+      double diff_pose[3] ={ecef_pose[0] - ecef_pose_last[0], ecef_pose[1] - ecef_pose_last[1], ecef_pose[2] - ecef_pose_last[2]};
+      double distance = sqrt(pow(diff_pose[0], 2.0) + pow(diff_pose[1], 2.0) + pow(diff_pose[2], 2.0));
+      update_flag = distance > line_interval_;
+    }
+
+    if(update_flag && llh[0] != 0 && llh[1] != 0)
+    {
+      data_ss <<
+        std::setprecision(std::numeric_limits<double>::max_digits10) << llh[1] << "," <<
+        std::setprecision(std::numeric_limits<double>::max_digits10) << llh[0] << "," <<
+        std::setprecision(std::numeric_limits<double>::max_digits10) << llh[2]
+        << std::endl;
+      time_last = time;
+      ecef_pose_last[0] = ecef_pose[0];
+      ecef_pose_last[1] = ecef_pose[1];
+      ecef_pose_last[2] = ecef_pose[2];
+    }
+  return;
+}
+
 std::string KmlGenerator::NavSatFixMsgVector2LineStr(const std::vector<sensor_msgs::NavSatFix>& fix_msg_vector)
 {
   std::stringstream data_ss;
@@ -131,32 +163,30 @@ std::string KmlGenerator::NavSatFixMsgVector2LineStr(const std::vector<sensor_ms
 
   double time_last = 0;
   double ecef_pose_last[3] = {0, 0, 0};
+  for (int i=0; i<data_length; i++)
+  {
+    double time = fix_msg_vector[i].header.stamp.toSec();
+    double llh[3] = {fix_msg_vector[i].latitude, fix_msg_vector[i].longitude, fix_msg_vector[i].altitude};
+    LLH2StringSteamInCondition(data_ss,time_last,ecef_pose_last, time, llh);
+  }
+
+  return data_ss.str();
+}
+
+std::string KmlGenerator::PointInfomationVector2LineStr(const std::vector<PointInfomation>& point_information_vector)
+{
+  std::stringstream data_ss;
+  std::size_t data_length = std::distance(point_information_vector.begin(), point_information_vector.end());
+
+
+  double time_last = 0;
+  double ecef_pose_last[3] = {0, 0, 0};
   double ecef_pose[3];
   for (int i=0; i<data_length; i++)
   {
-    bool update_flag = false;
-    if(interval_type_ == IntervalType::TIME_INTERBAL)
-    {
-      update_flag = (fix_msg_vector[i].header.stamp.toSec() != time_last && fix_msg_vector[i].header.stamp.toSec() - time_last > time_interval_);
-    }
-    else if (interval_type_ == IntervalType::DISTANCE_INTERBAL)
-    {
-      double llh[3] = {fix_msg_vector[i].latitude, fix_msg_vector[i].longitude , fix_msg_vector[i].altitude};
-      llh2xyz(llh, ecef_pose);
-      double diff_pose[3] ={ecef_pose[0] - ecef_pose_last[0], ecef_pose[1] - ecef_pose_last[1], ecef_pose[2] - ecef_pose_last[2]};
-      double distance = sqrt(pow(diff_pose[0], 2.0) + pow(diff_pose[1], 2.0) + pow(diff_pose[2], 2.0));
-      update_flag = distance > line_interval_;
-    }
-
-    if(update_flag && fix_msg_vector[i].longitude != 0 && fix_msg_vector[i].latitude != 0)
-    {
-      data_ss << std::setprecision(std::numeric_limits<double>::max_digits10) 
-        << fix_msg_vector[i].longitude << ","
-        << fix_msg_vector[i].latitude << ","
-        << fix_msg_vector[i].altitude
-        << std::endl;
-      time_last = fix_msg_vector[i].header.stamp.toSec();
-    }
+    double time = point_information_vector[i].time;
+    double llh[3] = {point_information_vector[i].latitude, point_information_vector[i].longitude, point_information_vector[i].altitude};
+    LLH2StringSteamInCondition(data_ss,time_last,ecef_pose_last, time, llh);
   }
 
   return data_ss.str();
@@ -205,7 +235,7 @@ std::string KmlGenerator::NavSatFixMsgVector2PointStr(const std::vector<sensor_m
 
   double time_last = 0;
   double ecef_pose_last[3] = {0, 0, 0};
-  double ecef_pose[3];
+  double ecef_pose[3] = {0, 0, 0};
   for (int i=0; i<data_length; i++)
   {
     bool update_flag = false;
@@ -249,6 +279,27 @@ bool KmlGenerator::addNavSatFixMsgVectorLine(const std::vector<sensor_msgs::NavS
 {
   data_name.erase(std::remove(data_name.begin(), data_name.end(), ' '), data_name.end());
   std::string data_str = NavSatFixMsgVector2LineStr(fix_msg_vector);
+
+  data_count_++;
+  if (!addKmlLineHeader(data_name)) return false;
+  if (!addKmlLineBody(data_name, data_str)) return false;
+  return true;
+}
+
+bool KmlGenerator::addPointInfomationVectorLine(const std::vector<PointInfomation>& point_information_vector)
+{
+  std::string data_str = PointInfomationVector2LineStr(point_information_vector);
+  std::string data_name;
+
+  data_name = "DATANUM_" + std::to_string(data_count_);
+
+  return addPointInfomationVectorLine(point_information_vector, data_name);
+}
+
+bool KmlGenerator::addPointInfomationVectorLine(const std::vector<PointInfomation>& point_information_vector, std::string data_name)
+{
+  data_name.erase(std::remove(data_name.begin(), data_name.end(), ' '), data_name.end());
+  std::string data_str = PointInfomationVector2LineStr(point_information_vector);
 
   data_count_++;
   if (!addKmlLineHeader(data_name)) return false;

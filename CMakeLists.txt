@@ -38,3 +38,14 @@ target_link_libraries(fixcsv2kml
   ${catkin_LIBRARIES}
   kml_generator
 )
+
+add_executable(eagleyelogcsv2kml
+  sample/eagleyelogcsv2kml.cpp
+)
+add_dependencies(eagleyelogcsv2kml
+kml_generator
+)
+target_link_libraries(eagleyelogcsv2kml
+  ${catkin_LIBRARIES}
+  kml_generator
+)
