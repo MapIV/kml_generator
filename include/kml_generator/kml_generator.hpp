@@ -89,16 +89,20 @@ private:
   bool addKmlPointBody(std::string data_name, std::string data_str);
 
   void LLH2StringInCondition(std::string & str,double & time_last, double ecef_pose_last[3],
-  const double time, double llh[3], int seq);
+  const double time, double llh[3], int seq, double ecef_base_pose[3]);
 
   std::string NavSatFixMsgVector2LineStr(const std::vector<sensor_msgs::NavSatFix>&);
-  std::string NavSatFixMsg2PointStr(const int seq,const double time, double llh[3], const int sequence);
+  std::string LLHTimeSeq2PointStr(const int seq,const double time, double llh[3], const int sequence);
   std::string NavSatFixMsgVector2PointStr(const std::vector<sensor_msgs::NavSatFix>&, std::string data_name);
 
   std::string PointInfomationVector2LineStr(const std::vector<PointInfomation>&);
   std::string PointInfomationVector2PointStr(const std::vector<PointInfomation>&, std::string data_name);
 
+  std::string make_double_string(double d);
+
   void llh2xyz(double*, double*);
+  void xyz2enu(double ecef_pos[3], double ecef_base_pos[3], double enu_pos[3]);
+  void ecef2llh(double ecef_pos[3], double llh_pos[3]);
 
 };
 

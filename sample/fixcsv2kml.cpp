@@ -101,7 +101,7 @@ int main(int argc, char** argv) {
   kml_generator.addNavSatFixMsgVectorPoint(vector_fix, "GNSS Point1");
 
   kml_generator.setIntervalType(KmlGenerator::IntervalType::DISTANCE_INTERBAL);
-  kml_generator.setLineInterval(2.0);
+  kml_generator.setPointInterval(10.0);
   kml_generator.addNavSatFixMsgVectorPoint(vector_fix, "GNSS Point2");
 
   kml_generator.outputKml();
