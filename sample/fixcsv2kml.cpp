@@ -90,12 +90,13 @@ int main(int argc, char** argv) {
 
   std::vector<sensor_msgs::NavSatFix> vector_fix = NavSatFixMsgCsvtoVector(csv_name);
 
-  std::string log_link_url = "https://github.com/MapIV/eagleye/blob/main-ros1/docs/logo.png";
-  KmlGenerator kml_generator(kml_name, log_link_url);
+  std::string logo_name = "eagleye";
+  std::string logo_link_url = "https://github.com/MapIV/eagleye/blob/main-ros1/docs/logo.png";
+  KmlGenerator kml_generator(kml_name, logo_name, logo_link_url);
 
-  kml_generator.addNavSatFixMsgVectorLine(vector_fix);
-  kml_generator.addNavSatFixMsgVectorPoint(vector_fix);
-  kml_generator.addNavSatFixMsgVectorPoint(vector_fix);
+  kml_generator.addNavSatFixMsgVectorLine(vector_fix, "GNSS Line");
+  kml_generator.addNavSatFixMsgVectorPoint(vector_fix, "GNSS Point1");
+  kml_generator.addNavSatFixMsgVectorPoint(vector_fix, "GNSS Point2");
 
   kml_generator.outputKml();
 

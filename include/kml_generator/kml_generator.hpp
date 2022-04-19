@@ -14,7 +14,7 @@ class KmlGenerator
 public:
   KmlGenerator();
   KmlGenerator(std::string file_name);
-  KmlGenerator(std::string file_name, std::string log_link_url);
+  KmlGenerator(std::string file_name, std::string logo_name, std::string log_link_url);
 
   void initKml(std::string name);
 

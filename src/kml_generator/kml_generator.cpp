@@ -15,13 +15,13 @@ KmlGenerator::KmlGenerator(std::string file_name)
   initKml(file_name_);
 }
 
-KmlGenerator::KmlGenerator(std::string file_name, std::string log_link_url)
+KmlGenerator::KmlGenerator(std::string file_name, std::string logo_name, std::string log_link_url)
 {
   file_name_ = file_name;
   log_link_url_ = log_link_url;
   kml_file_ofs_.open(file_name_, std::ios::out);
   std::cout << "Output file = " << file_name_ << std::endl;
-  initKml(file_name_);
+  initKml(logo_name);
 
 }
 
@@ -113,15 +113,11 @@ bool KmlGenerator::addKmlPointBody(std::string data_name, std::string data_str)
           "\t\t</BalloonStyle>\n"
           "\t</Style>\n"
           "<Folder id=\"ID2\">\n"
-          "\t<name>CAR Trajectory</name>\n"
+          "\t<name>" + data_name + "</name>\n"
           "\t<visibility>1</visibility>\n"
           "\t<open>0</open>"
           ;
-  body_ += "\t<Folder id=\"ID21\">\n"
-    "\t<name> " + data_name + " </name>\n"
-    "\t<visibility>0</visibility>\n";
   body_ += data_str;
-  body_ += "\t</Folder>\n";
   body_ += "\t</Folder>\n";
 
   return true;
@@ -221,6 +217,7 @@ bool KmlGenerator::addNavSatFixMsgVectorLine(const std::vector<sensor_msgs::NavS
 
 bool KmlGenerator::addNavSatFixMsgVectorLine(const std::vector<sensor_msgs::NavSatFix>& fix_msg_vector, std::string data_name)
 {
+  data_name.erase(std::remove(data_name.begin(), data_name.end(), ' '), data_name.end());
   std::string data_str = NavSatFixMsgVector2LineStr(fix_msg_vector);
 
   data_count_++;
@@ -236,6 +233,17 @@ bool KmlGenerator::addNavSatFixMsgVectorPoint(const std::vector<sensor_msgs::Nav
 
   data_count_++;
   data_name = "DATANUM_" + std::to_string(data_count_);
+
+  std::string data_str = NavSatFixMsgVector2PointStr(fix_msg_vector, data_name);
+
+  if (!addKmlPointBody(data_name, data_str)) return false;
+  return true;
+}
+
+bool KmlGenerator::addNavSatFixMsgVectorPoint(const std::vector<sensor_msgs::NavSatFix>& fix_msg_vector, std::string data_name)
+{
+  data_name.erase(std::remove(data_name.begin(), data_name.end(), ' '), data_name.end());
+  data_count_++;
 
   std::string data_str = NavSatFixMsgVector2PointStr(fix_msg_vector, data_name);
 
