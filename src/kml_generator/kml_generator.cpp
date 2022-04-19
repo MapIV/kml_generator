@@ -123,7 +123,9 @@ bool KmlGenerator::addKmlPointBody(std::string data_name, std::string data_str)
   return true;
 }
 
-void KmlGenerator::LLH2StringSteamInCondition(std::stringstream & data_ss,double & time_last, double ecef_pose_last[3],
+// void KmlGenerator::LLH2StringSteamInCondition(std::stringstream & data_ss,double & time_last, double ecef_pose_last[3],
+//   const double time, double llh[3])
+void KmlGenerator::LLH2StringInCondition(std::string & str,double & time_last, double ecef_pose_last[3],
   const double time, double llh[3])
 {
     bool update_flag = false;
@@ -142,11 +144,13 @@ void KmlGenerator::LLH2StringSteamInCondition(std::stringstream & data_ss,double
 
     if(update_flag && llh[0] != 0 && llh[1] != 0)
     {
+      std::stringstream data_ss;
       data_ss <<
         std::setprecision(std::numeric_limits<double>::max_digits10) << llh[1] << "," <<
         std::setprecision(std::numeric_limits<double>::max_digits10) << llh[0] << "," <<
         std::setprecision(std::numeric_limits<double>::max_digits10) << llh[2]
         << std::endl;
+      str = data_ss.str();
       time_last = time;
       ecef_pose_last[0] = ecef_pose[0];
       ecef_pose_last[1] = ecef_pose[1];
@@ -167,7 +171,9 @@ std::string KmlGenerator::NavSatFixMsgVector2LineStr(const std::vector<sensor_ms
   {
     double time = fix_msg_vector[i].header.stamp.toSec();
     double llh[3] = {fix_msg_vector[i].latitude, fix_msg_vector[i].longitude, fix_msg_vector[i].altitude};
-    LLH2StringSteamInCondition(data_ss,time_last,ecef_pose_last, time, llh);
+    std::string str;
+    LLH2StringInCondition(str,time_last,ecef_pose_last, time, llh);
+    data_ss << str;
   }
 
   return data_ss.str();
@@ -186,7 +192,9 @@ std::string KmlGenerator::PointInfomationVector2LineStr(const std::vector<PointI
   {
     double time = point_information_vector[i].time;
     double llh[3] = {point_information_vector[i].latitude, point_information_vector[i].longitude, point_information_vector[i].altitude};
-    LLH2StringSteamInCondition(data_ss,time_last,ecef_pose_last, time, llh);
+    std::string str;
+    LLH2StringInCondition(str,time_last,ecef_pose_last, time, llh);
+    data_ss << str;
   }
 
   return data_ss.str();

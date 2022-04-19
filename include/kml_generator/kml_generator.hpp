@@ -78,7 +78,9 @@ private:
   bool addKmlLineHeader(std::string data_name);
   bool addKmlLineBody(std::string data_name, std::string data_str);
   bool addKmlPointBody(std::string data_name, std::string data_str);
-  void LLH2StringSteamInCondition(std::stringstream & data_ss,double & time_last, double ecef_pose_last[3],
+  // void LLH2StringSteamInCondition(std::stringstream & data_ss,double & time_last, double ecef_pose_last[3],
+  // const double time, double llh[3]);
+  void LLH2StringInCondition(std::string & str,double & time_last, double ecef_pose_last[3],
   const double time, double llh[3]);
   std::string NavSatFixMsgVector2LineStr(const std::vector<sensor_msgs::NavSatFix>&);
   std::string NavSatFixMsg2PointStr(const sensor_msgs::NavSatFix, std::string data_name);
