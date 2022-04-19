@@ -20,7 +20,6 @@ public:
   {
     std::string name;
     std::string value_str;
-    std::string value_unit;
   };
   std::vector<OtherInfo> other_info;
 };
@@ -39,6 +38,8 @@ public:
 
   bool addPointInfomationVectorLine(const std::vector<PointInfomation>&, std::string data_name);
   bool addPointInfomationVectorLine(const std::vector<PointInfomation>&);
+  bool addPointInfomationVectorPoint(const std::vector<PointInfomation>&, std::string data_name);
+  bool addPointInfomationVectorPoint(const std::vector<PointInfomation>&);
 
   bool outputKml();
 
@@ -84,6 +85,7 @@ private:
   std::string NavSatFixMsgVector2PointStr(const std::vector<sensor_msgs::NavSatFix>&, std::string data_name);
 
   std::string PointInfomationVector2LineStr(const std::vector<PointInfomation>&);
+  std::string PointInfomationVector2PointStr(const std::vector<PointInfomation>&, std::string data_name);
 
   void llh2xyz(double*, double*);
 

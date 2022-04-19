@@ -13,6 +13,7 @@ The fix.csv was generated with the command "rostopic echo -b bag_name.bag -p /to
 <img src="img/fixcsv2kml.png" height="400pix" /><br>
 
 ## Eagleye
+eagleyelogcsv2kml.cpp is a sample program for putting your own information into points.
 
 ```
 roscd kml_generator/data

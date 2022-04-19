@@ -79,13 +79,13 @@ int main(int argc, char** argv) {
   KmlGenerator kml_generator(kml_name, logo_name, logo_link_url);
 
   kml_generator.setTimeInterval(0.1);
-  kml_generator.addPointInfomationVectorLine(vector_point_information, "GNSS Line");
+  kml_generator.addPointInfomationVectorLine(vector_point_information, "Eagleye Line");
 
-  // kml_generator.addPointInfomationVectorPoint(vector_fix, "GNSS Point1");
+  // kml_generator.addPointInfomationVectorPoint(vector_point_information, "Eagleye Point1");
 
   // kml_generator.setIntervalType(KmlGenerator::IntervalType::DISTANCE_INTERBAL);
   // kml_generator.setLineInterval(2.0);
-  // kml_generator.addPointInfomationVectorPoint(vector_fix, "GNSS Point2");
+  // kml_generator.addPointInfomationVectorPoint(vector_point_information, "Eagleye Point2");
 
   kml_generator.outputKml();
 

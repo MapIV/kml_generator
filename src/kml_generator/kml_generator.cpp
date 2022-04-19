@@ -328,6 +328,28 @@ bool KmlGenerator::addNavSatFixMsgVectorPoint(const std::vector<sensor_msgs::Nav
   return true;
 }
 
+bool KmlGenerator::addPointInfomationVectorPoint(const std::vector<PointInfomation>& point_information_vector)
+{
+
+  std::string data_name;
+
+  data_name = "DATANUM_" + std::to_string(data_count_);
+
+  return addPointInfomationVectorPoint(point_information_vector, data_name);
+}
+
+bool KmlGenerator::addPointInfomationVectorPoint(const std::vector<PointInfomation>& point_information_vector, std::string data_name)
+{
+  data_name.erase(std::remove(data_name.begin(), data_name.end(), ' '), data_name.end());
+  data_count_++;
+
+  // std::string data_str = PointInfomationVector2PointStr(point_information_vector, data_name);
+
+  // if (!addKmlPointBody(data_name, data_str)) return false;
+  return true;
+}
+
+
 
 bool KmlGenerator::outputKml()
 {
