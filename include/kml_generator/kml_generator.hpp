@@ -21,6 +21,9 @@ public:
   {
     std::string name;
     std::string value_str;
+    // ex)
+    // name: Velocity Scale Factor
+    // value_str: 0.987684
   };
   std::vector<OtherInfo> other_info_vector;
 };
@@ -92,7 +95,8 @@ private:
   const double time, double llh[3], int seq, double ecef_base_pose[3], std::vector<PointInfomation::OtherInfo> other_info_vector);
 
   std::string NavSatFixMsgVector2LineStr(const std::vector<sensor_msgs::NavSatFix>&);
-  std::string LLHTimeSeq2PointStr(const int seq,const double time, double llh[3], const int sequence, std::vector<PointInfomation::OtherInfo> other_info_vector);
+  std::string LLHTimeSeq2PointStr(const int seq,const double time, double llh[3], const int sequence,
+    std::vector<PointInfomation::OtherInfo> other_info_vector);
   std::string NavSatFixMsgVector2PointStr(const std::vector<sensor_msgs::NavSatFix>&, std::string data_name);
 
   std::string PointInfomationVector2LineStr(const std::vector<PointInfomation>&);

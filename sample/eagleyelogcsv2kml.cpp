@@ -86,9 +86,9 @@ int main(int argc, char** argv) {
 
   std::vector<PointInfomation> vector_point_information = EagleyeLogCsvtoVector(csv_name);
 
-  std::string logo_name = "eagleye";
+  std::string name = "eagleye";
   std::string logo_link_url = "https://github.com/MapIV/eagleye/blob/main-ros1/docs/logo.png";
-  KmlGenerator kml_generator(kml_name, logo_name, logo_link_url);
+  KmlGenerator kml_generator(kml_name, name, logo_link_url);
 
   kml_generator.setTimeInterval(1.0);
   kml_generator.addPointInfomationVectorLine(vector_point_information, "Eagleye Line");
