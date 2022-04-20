@@ -124,7 +124,7 @@ bool KmlGenerator::addKmlPointBody(std::string data_name, std::string data_str)
 }
 
 void KmlGenerator::LLH2StringInCondition(std::string & str,double & time_last, double ecef_pose_last[3],
-  const double time, double llh[3], int seq, double ecef_base_pose[3])
+  const double time, double llh[3], int seq, double ecef_base_pose[3], std::vector<PointInfomation::OtherInfo> other_info_vector)
 {
     bool update_flag = false;
     double ecef_pose[3];
@@ -176,7 +176,7 @@ void KmlGenerator::LLH2StringInCondition(std::string & str,double & time_last, d
       }
       else if (kml_type_ ==  KMLType::POINT)
       {
-        str += LLHTimeSeq2PointStr(seq, time, llh, seq);
+        str += LLHTimeSeq2PointStr(seq, time, llh, seq, other_info_vector);
       }
       
       time_last = time;
@@ -197,11 +197,12 @@ std::string KmlGenerator::NavSatFixMsgVector2LineStr(const std::vector<sensor_ms
   double ecef_base_pose[3] = {0, 0, 0};
   for (int i=0; i<data_length; i++)
   {
+    std::vector<PointInfomation::OtherInfo> other_info_vector;
     double time = fix_msg_vector[i].header.stamp.toSec();
     double llh[3] = {fix_msg_vector[i].latitude, fix_msg_vector[i].longitude, fix_msg_vector[i].altitude};
     int seq = fix_msg_vector[i].header.seq;
     std::string str;
-    LLH2StringInCondition(str,time_last,ecef_pose_last, time, llh, seq, ecef_base_pose);
+    LLH2StringInCondition(str,time_last,ecef_pose_last, time, llh, seq, ecef_base_pose, other_info_vector);
     data_ss << str;
   }
 
@@ -213,24 +214,24 @@ std::string KmlGenerator::PointInfomationVector2LineStr(const std::vector<PointI
   std::stringstream data_ss;
   std::size_t data_length = point_information_vector.size();
 
-
   double time_last = 0;
   double ecef_pose_last[3] = {0, 0, 0};
   double ecef_base_pose[3] = {0, 0, 0};
   for (int i=0; i<data_length; i++)
   {
+    std::vector<PointInfomation::OtherInfo> other_info_vector = point_information_vector[i].other_info_vector;
     double time = point_information_vector[i].time;
     double llh[3] = {point_information_vector[i].latitude, point_information_vector[i].longitude, point_information_vector[i].altitude};
     int seq = point_information_vector[i].seq;
     std::string str;
-    LLH2StringInCondition(str,time_last,ecef_pose_last, time, llh, seq, ecef_base_pose);
+    LLH2StringInCondition(str,time_last,ecef_pose_last, time, llh, seq, ecef_base_pose, other_info_vector);
     data_ss << str;
   }
 
   return data_ss.str();
 }
 
-std::string KmlGenerator::LLHTimeSeq2PointStr(const int seq,const double time, double llh[3], const int sequence)
+std::string KmlGenerator::LLHTimeSeq2PointStr(const int seq,const double time, double llh[3], const int sequence, std::vector<PointInfomation::OtherInfo> other_info_vector)
 {
   std::string data;
   data =
@@ -249,20 +250,26 @@ std::string KmlGenerator::LLHTimeSeq2PointStr(const int seq,const double time, d
                 \t\t\t\t<TR ALIGN=RIGHT><TD ALIGN=LEFT>lon: </TD><TD>"
             + make_double_string(llh[1]) + "</TD></TR>\n\
                 \t\t\t\t<TR ALIGN=RIGHT><TD ALIGN=LEFT>height: </TD><TD>"
-            + make_double_string(llh[2]) + "</TD></TR>\n\
-                \t\t\t</TABLE>\n\
-                ]]></description>\n\
-                \t\t<styleUrl>"
-            + "#" + data_name_ +
-            + "</styleUrl>\n\
-                \t\t<Point>\n\
-                \t\t\t<coordinates>"
+            + make_double_string(llh[2]) + "</TD></TR>\n";
+  if(!other_info_vector.empty())
+  {
+    for(PointInfomation::OtherInfo oi : other_info_vector){
+      data += "\t\t\t\t<TR ALIGN=RIGHT><TD ALIGN=LEFT>"+ oi.name+": </TD><TD>"
+            + oi.value_str + "</TD></TR>\n";
+    }
+  }
+  data +=   "\t\t\t</TABLE>\n"
+                "]]></description>\n"
+                "\t\t<styleUrl>#" + data_name_ +
+            + "</styleUrl>\n"
+                "\t\t<Point>\n"
+                "t\t\t<coordinates>"
             + make_double_string(llh[1]) + ","
             + make_double_string(llh[0]) + ","
             + make_double_string(llh[2]) + ","
-            + "</coordinates>\n\
-                \t\t</Point>\n\
-                \t</Placemark>";
+            + "</coordinates>\n"
+                "\t\t</Point>\n"
+                "\t</Placemark>";
   return data;
 }
 
@@ -276,11 +283,12 @@ std::string KmlGenerator::NavSatFixMsgVector2PointStr(const std::vector<sensor_m
   double ecef_base_pose[3] = {0, 0, 0};
   for (int i=0; i<data_length; i++)
   {
+    std::vector<PointInfomation::OtherInfo> other_info_vector;
     double time = fix_msg_vector[i].header.stamp.toSec();
     double llh[3] = {fix_msg_vector[i].latitude, fix_msg_vector[i].longitude, fix_msg_vector[i].altitude};
     int seq = fix_msg_vector[i].header.seq;
     std::string str;
-    LLH2StringInCondition(str,time_last,ecef_pose_last, time, llh, seq, ecef_base_pose);
+    LLH2StringInCondition(str,time_last,ecef_pose_last, time, llh, seq, ecef_base_pose, other_info_vector);
     data += str;
   }
 
@@ -297,11 +305,12 @@ std::string KmlGenerator::PointInfomationVector2PointStr(const std::vector<Point
   double ecef_base_pose[3] = {0, 0, 0};
   for (int i=0; i<data_length; i++)
   {
+    std::vector<PointInfomation::OtherInfo> other_info_vector = point_information_vector[i].other_info_vector;
     double time = point_information_vector[i].time;
     double llh[3] = {point_information_vector[i].latitude, point_information_vector[i].longitude, point_information_vector[i].altitude};
     int seq = point_information_vector[i].seq;
     std::string str;
-    LLH2StringInCondition(str,time_last,ecef_pose_last, time, llh, seq, ecef_base_pose);
+    LLH2StringInCondition(str,time_last,ecef_pose_last, time, llh, seq, ecef_base_pose, other_info_vector);
     data += str;
   }
 

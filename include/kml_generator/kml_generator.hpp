@@ -13,16 +13,16 @@ struct PointInfomation
 {
 public:
   int seq = 0;
-  double time;
-  double latitude;
-  double longitude;
-  double altitude;
+  double time;      // [sec]
+  double latitude;  // [deg]
+  double longitude; // [deg]
+  double altitude;  // [m]
   struct OtherInfo
   {
     std::string name;
     std::string value_str;
   };
-  std::vector<OtherInfo> other_info;
+  std::vector<OtherInfo> other_info_vector;
 };
 
 class KmlGenerator
@@ -75,7 +75,7 @@ private:
   KMLType kml_type_;
   std::string data_name_;
   double time_interval_ = 0.2; // [sec]
-  double point_interval_ = 1.0; // [m]
+  double point_interval_ = 5.0; // [m]
   double line_interval_ = 1.0; // [m]
 
   std::string color_list[8] 
@@ -89,10 +89,10 @@ private:
   bool addKmlPointBody(std::string data_name, std::string data_str);
 
   void LLH2StringInCondition(std::string & str,double & time_last, double ecef_pose_last[3],
-  const double time, double llh[3], int seq, double ecef_base_pose[3]);
+  const double time, double llh[3], int seq, double ecef_base_pose[3], std::vector<PointInfomation::OtherInfo> other_info_vector);
 
   std::string NavSatFixMsgVector2LineStr(const std::vector<sensor_msgs::NavSatFix>&);
-  std::string LLHTimeSeq2PointStr(const int seq,const double time, double llh[3], const int sequence);
+  std::string LLHTimeSeq2PointStr(const int seq,const double time, double llh[3], const int sequence, std::vector<PointInfomation::OtherInfo> other_info_vector);
   std::string NavSatFixMsgVector2PointStr(const std::vector<sensor_msgs::NavSatFix>&, std::string data_name);
 
   std::string PointInfomationVector2LineStr(const std::vector<PointInfomation>&);

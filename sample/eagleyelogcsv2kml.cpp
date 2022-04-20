@@ -54,6 +54,17 @@ std::vector<PointInfomation> EagleyeLogCsvtoVector(std::string csv_name)
     tmp_eagleye.latitude = std::stod(str_vec.at(107));
     tmp_eagleye.longitude = std::stod(str_vec.at(108));
     tmp_eagleye.altitude = std::stod(str_vec.at(109));
+
+    PointInfomation::OtherInfo other_info0;
+    other_info0.name = "Velocity Scale Factor";
+    other_info0.value_str = str_vec.at(25);
+
+    PointInfomation::OtherInfo other_info1;
+    other_info1.name = "Velocity Scale Factor Flag";
+    other_info1.value_str = str_vec.at(32);
+
+    tmp_eagleye.other_info_vector.push_back(other_info0);
+    tmp_eagleye.other_info_vector.push_back(other_info1);
   
     vector_eagleye.push_back(tmp_eagleye);
 
