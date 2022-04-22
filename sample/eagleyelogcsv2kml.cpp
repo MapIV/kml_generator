@@ -25,7 +25,7 @@ ros::Time str2ROSTime(std::string input)
   return time;
 }
 
-std::vector<PointInfomation> EagleyeLogCsvtoVector(std::string csv_name)
+std::vector<Point> EagleyeLogCsvtoVector(std::string csv_name)
 {
   std::ifstream ifs(csv_name);
   if (!ifs)
@@ -34,7 +34,7 @@ std::vector<PointInfomation> EagleyeLogCsvtoVector(std::string csv_name)
     exit(1);
   }
 
-  std::vector<PointInfomation> vector_eagleye;
+  std::vector<Point> vector_eagleye;
   int cnt = 0;
   std::string line;
   while (getline(ifs, line))
@@ -45,7 +45,7 @@ std::vector<PointInfomation> EagleyeLogCsvtoVector(std::string csv_name)
       cnt++;
       continue;
     }
-    PointInfomation tmp_eagleye;
+    Point tmp_eagleye;
 
     std::vector<std::string> str_vec = split(line, ',');
 
@@ -55,11 +55,11 @@ std::vector<PointInfomation> EagleyeLogCsvtoVector(std::string csv_name)
     tmp_eagleye.longitude = std::stod(str_vec.at(108));
     tmp_eagleye.altitude = std::stod(str_vec.at(109));
 
-    PointInfomation::OtherInfo other_info0;
+    Point::OtherInfo other_info0;
     other_info0.name = "Velocity Scale Factor";
     other_info0.value_str = str_vec.at(25);
 
-    PointInfomation::OtherInfo other_info1;
+    Point::OtherInfo other_info1;
     other_info1.name = "Velocity Scale Factor Flag";
     other_info1.value_str = str_vec.at(32);
 
@@ -84,20 +84,23 @@ int main(int argc, char** argv) {
   std::string csv_name = argv[1];
   std::string kml_name = argv[2];
 
-  std::vector<PointInfomation> vector_point_information = EagleyeLogCsvtoVector(csv_name);
+  std::vector<Point> vector_point = EagleyeLogCsvtoVector(csv_name);
 
   std::string name = "eagleye";
   std::string logo_link_url = "https://github.com/MapIV/eagleye/blob/main-ros1/docs/logo.png";
   KmlGenerator kml_generator(kml_name, name, logo_link_url);
 
+  int visibility = 1;
+
   kml_generator.setTimeInterval(1.0);
-  kml_generator.addPointInfomationVectorLine(vector_point_information, "Eagleye Line");
+  kml_generator.addPointVector2LineKML(vector_point, "Eagleye Line", visibility);
+
   kml_generator.setIntervalType(KmlGenerator::IntervalType::DISTANCE_INTERBAL);
-  
-  kml_generator.addPointInfomationVectorPoint(vector_point_information, "Eagleye Point1");
+
+  kml_generator.addPointVector2PointKML(vector_point, "Eagleye Point1", visibility);
 
   kml_generator.setPointInterval(10.0);
-  kml_generator.addPointInfomationVectorPoint(vector_point_information, "Eagleye Point2");
+  kml_generator.addPointVector2PointKML(vector_point, "Eagleye Point2", visibility);
 
   kml_generator.outputKml();
 

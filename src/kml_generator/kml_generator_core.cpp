@@ -68,13 +68,13 @@ bool KmlGenerator::addKmlLineHeader(std::string data_name)
   return true;
 }
 
-bool KmlGenerator::addKmlLineBody(std::string data_name, std::string data_str)
+bool KmlGenerator::addKmlLineBody(std::string data_name, std::string data_str, int visibility)
 {
   std::string tmp_body;
   tmp_body =
       "\t<Placemark>\n"
       "\t<name> " + data_name + " </name>\n"
-      "\t<visibility>1</visibility>\n"
+      "\t<visibility>"+std::to_string(visibility)+"</visibility>\n"
       "\t<description><![CDATA[]]></description>\n"
       "\t<styleUrl>#" + data_name + "</styleUrl>\n"
       "\t<LineString>\n"
@@ -91,7 +91,7 @@ bool KmlGenerator::addKmlLineBody(std::string data_name, std::string data_str)
   return true;
 }
 
-bool KmlGenerator::addKmlPointBody(std::string data_name, std::string data_str)
+bool KmlGenerator::addKmlPointBody(std::string data_name, std::string data_str, int visibility)
 {
   std::string color_str = color_list[(data_count_)%8];
   body_ +=  
@@ -114,7 +114,7 @@ bool KmlGenerator::addKmlPointBody(std::string data_name, std::string data_str)
           "\t</Style>\n"
           "<Folder id=\"ID2\">\n"
           "\t<name>" + data_name + "</name>\n"
-          "\t<visibility>1</visibility>\n"
+          "\t<visibility>"+ std::to_string(visibility) +"</visibility>\n"
           "\t<open>0</open>"
           ;
   body_ += data_str;
@@ -124,7 +124,7 @@ bool KmlGenerator::addKmlPointBody(std::string data_name, std::string data_str)
 }
 
 void KmlGenerator::LLH2StringInCondition(std::string & str,double & time_last, double ecef_pose_last[3],
-  const double time, double llh[3], int seq, double ecef_base_pose[3], std::vector<PointInfomation::OtherInfo> other_info_vector)
+  const double time, double llh[3], int seq, double ecef_base_pose[3], std::vector<Point::OtherInfo> other_info_vector)
 {
     bool update_flag = false;
     double ecef_pose[3];
@@ -197,7 +197,7 @@ std::string KmlGenerator::NavSatFixMsgVector2LineStr(const std::vector<sensor_ms
   double ecef_base_pose[3] = {0, 0, 0};
   for (int i=0; i<data_length; i++)
   {
-    std::vector<PointInfomation::OtherInfo> other_info_vector;
+    std::vector<Point::OtherInfo> other_info_vector;
     double time = fix_msg_vector[i].header.stamp.toSec();
     double llh[3] = {fix_msg_vector[i].latitude, fix_msg_vector[i].longitude, fix_msg_vector[i].altitude};
     int seq = fix_msg_vector[i].header.seq;
@@ -209,20 +209,20 @@ std::string KmlGenerator::NavSatFixMsgVector2LineStr(const std::vector<sensor_ms
   return data_ss.str();
 }
 
-std::string KmlGenerator::PointInfomationVector2LineStr(const std::vector<PointInfomation>& point_information_vector)
+std::string KmlGenerator::PointVector2LineStr(const std::vector<Point>& point_vector)
 {
   std::stringstream data_ss;
-  std::size_t data_length = point_information_vector.size();
+  std::size_t data_length = point_vector.size();
 
   double time_last = 0;
   double ecef_pose_last[3] = {0, 0, 0};
   double ecef_base_pose[3] = {0, 0, 0};
   for (int i=0; i<data_length; i++)
   {
-    std::vector<PointInfomation::OtherInfo> other_info_vector = point_information_vector[i].other_info_vector;
-    double time = point_information_vector[i].time;
-    double llh[3] = {point_information_vector[i].latitude, point_information_vector[i].longitude, point_information_vector[i].altitude};
-    int seq = point_information_vector[i].seq;
+    std::vector<Point::OtherInfo> other_info_vector = point_vector[i].other_info_vector;
+    double time = point_vector[i].time;
+    double llh[3] = {point_vector[i].latitude, point_vector[i].longitude, point_vector[i].altitude};
+    int seq = point_vector[i].seq;
     std::string str;
     LLH2StringInCondition(str,time_last,ecef_pose_last, time, llh, seq, ecef_base_pose, other_info_vector);
     data_ss << str;
@@ -231,7 +231,7 @@ std::string KmlGenerator::PointInfomationVector2LineStr(const std::vector<PointI
   return data_ss.str();
 }
 
-std::string KmlGenerator::LLHTimeSeq2PointStr(const int seq,const double time, double llh[3], const int sequence, std::vector<PointInfomation::OtherInfo> other_info_vector)
+std::string KmlGenerator::LLHTimeSeq2PointStr(const int seq,const double time, double llh[3], const int sequence, std::vector<Point::OtherInfo> other_info_vector)
 {
   std::string data;
   data =
@@ -253,7 +253,7 @@ std::string KmlGenerator::LLHTimeSeq2PointStr(const int seq,const double time, d
             + make_double_string(llh[2]) + "</TD></TR>\n";
   if(!other_info_vector.empty())
   {
-    for(PointInfomation::OtherInfo oi : other_info_vector){
+    for(Point::OtherInfo oi : other_info_vector){
       data += "\t\t\t\t<TR ALIGN=RIGHT><TD ALIGN=LEFT>"+ oi.name+": </TD><TD>"
             + oi.value_str + "</TD></TR>\n";
     }
@@ -283,7 +283,7 @@ std::string KmlGenerator::NavSatFixMsgVector2PointStr(const std::vector<sensor_m
   double ecef_base_pose[3] = {0, 0, 0};
   for (int i=0; i<data_length; i++)
   {
-    std::vector<PointInfomation::OtherInfo> other_info_vector;
+    std::vector<Point::OtherInfo> other_info_vector;
     double time = fix_msg_vector[i].header.stamp.toSec();
     double llh[3] = {fix_msg_vector[i].latitude, fix_msg_vector[i].longitude, fix_msg_vector[i].altitude};
     int seq = fix_msg_vector[i].header.seq;
@@ -295,20 +295,20 @@ std::string KmlGenerator::NavSatFixMsgVector2PointStr(const std::vector<sensor_m
   return data;
 }
 
-std::string KmlGenerator::PointInfomationVector2PointStr(const std::vector<PointInfomation>& point_information_vector, std::string data_name)
+std::string KmlGenerator::PointVector2PointStr(const std::vector<Point>& point_vector, std::string data_name)
 {
   std::string data;
-  std::size_t data_length = point_information_vector.size();
+  std::size_t data_length = point_vector.size();
 
   double time_last = 0;
   double ecef_pose_last[3] = {0, 0, 0};
   double ecef_base_pose[3] = {0, 0, 0};
   for (int i=0; i<data_length; i++)
   {
-    std::vector<PointInfomation::OtherInfo> other_info_vector = point_information_vector[i].other_info_vector;
-    double time = point_information_vector[i].time;
-    double llh[3] = {point_information_vector[i].latitude, point_information_vector[i].longitude, point_information_vector[i].altitude};
-    int seq = point_information_vector[i].seq;
+    std::vector<Point::OtherInfo> other_info_vector = point_vector[i].other_info_vector;
+    double time = point_vector[i].time;
+    double llh[3] = {point_vector[i].latitude, point_vector[i].longitude, point_vector[i].altitude};
+    int seq = point_vector[i].seq;
     std::string str;
     LLH2StringInCondition(str,time_last,ecef_pose_last, time, llh, seq, ecef_base_pose, other_info_vector);
     data += str;
@@ -318,17 +318,17 @@ std::string KmlGenerator::PointInfomationVector2PointStr(const std::vector<Point
 }
 
 
-bool KmlGenerator::addNavSatFixMsgVectorLine(const std::vector<sensor_msgs::NavSatFix>& fix_msg_vector)
+bool KmlGenerator::addNavSatFixMsgVectorLine(const std::vector<sensor_msgs::NavSatFix>& fix_msg_vector, int visibility)
 {
   std::string data_str = NavSatFixMsgVector2LineStr(fix_msg_vector);
   std::string data_name;
 
   data_name = "DATANUM_" + std::to_string(data_count_);
 
-  return addNavSatFixMsgVectorLine(fix_msg_vector, data_name);
+  return addNavSatFixMsgVectorLine(fix_msg_vector, data_name, visibility);
 }
 
-bool KmlGenerator::addNavSatFixMsgVectorLine(const std::vector<sensor_msgs::NavSatFix>& fix_msg_vector, std::string data_name)
+bool KmlGenerator::addNavSatFixMsgVectorLine(const std::vector<sensor_msgs::NavSatFix>& fix_msg_vector, std::string data_name, int visibility)
 {
   kml_type_ =  KMLType::LINE;
 
@@ -337,44 +337,44 @@ bool KmlGenerator::addNavSatFixMsgVectorLine(const std::vector<sensor_msgs::NavS
 
   data_count_++;
   if (!addKmlLineHeader(data_name)) return false;
-  if (!addKmlLineBody(data_name, data_str)) return false;
+  if (!addKmlLineBody(data_name, data_str, visibility)) return false;
   return true;
 }
 
-bool KmlGenerator::addPointInfomationVectorLine(const std::vector<PointInfomation>& point_information_vector)
+bool KmlGenerator::addPointVector2LineKML(const std::vector<Point>& point_vector, int visibility)
 {
-  std::string data_str = PointInfomationVector2LineStr(point_information_vector);
+  std::string data_str = PointVector2LineStr(point_vector);
   std::string data_name;
 
   data_name = "DATANUM_" + std::to_string(data_count_);
 
-  return addPointInfomationVectorLine(point_information_vector, data_name);
+  return addPointVector2LineKML(point_vector, data_name, visibility);
 }
 
-bool KmlGenerator::addPointInfomationVectorLine(const std::vector<PointInfomation>& point_information_vector, std::string data_name)
+bool KmlGenerator::addPointVector2LineKML(const std::vector<Point>& point_vector, std::string data_name, int visibility)
 {
   kml_type_ =  KMLType::LINE;
 
   data_name.erase(std::remove(data_name.begin(), data_name.end(), ' '), data_name.end());
-  std::string data_str = PointInfomationVector2LineStr(point_information_vector);
+  std::string data_str = PointVector2LineStr(point_vector);
 
   data_count_++;
   if (!addKmlLineHeader(data_name)) return false;
-  if (!addKmlLineBody(data_name, data_str)) return false;
+  if (!addKmlLineBody(data_name, data_str, visibility)) return false;
   return true;
 }
 
-bool KmlGenerator::addNavSatFixMsgVectorPoint(const std::vector<sensor_msgs::NavSatFix>& fix_msg_vector)
+bool KmlGenerator::addNavSatFixMsgVectorPoint(const std::vector<sensor_msgs::NavSatFix>& fix_msg_vector, int visibility)
 {
 
   std::string data_name;
 
   data_name = "DATANUM_" + std::to_string(data_count_);
 
-  return addNavSatFixMsgVectorPoint(fix_msg_vector, data_name);
+  return addNavSatFixMsgVectorPoint(fix_msg_vector, data_name, visibility);
 }
 
-bool KmlGenerator::addNavSatFixMsgVectorPoint(const std::vector<sensor_msgs::NavSatFix>& fix_msg_vector, std::string data_name)
+bool KmlGenerator::addNavSatFixMsgVectorPoint(const std::vector<sensor_msgs::NavSatFix>& fix_msg_vector, std::string data_name, int visibility)
 {
   kml_type_ =  KMLType::POINT;
 
@@ -385,20 +385,20 @@ bool KmlGenerator::addNavSatFixMsgVectorPoint(const std::vector<sensor_msgs::Nav
 
   std::string data_str = NavSatFixMsgVector2PointStr(fix_msg_vector, data_name);
 
-  if (!addKmlPointBody(data_name, data_str)) return false;
+  if (!addKmlPointBody(data_name, data_str, visibility)) return false;
   return true;
 }
 
-bool KmlGenerator::addPointInfomationVectorPoint(const std::vector<PointInfomation>& point_information_vector)
+bool KmlGenerator::addPointVector2PointKML(const std::vector<Point>& point_vector, int visibility)
 {
   std::string data_name;
 
   data_name = "DATANUM_" + std::to_string(data_count_);
 
-  return addPointInfomationVectorPoint(point_information_vector, data_name);
+  return addPointVector2PointKML(point_vector, data_name, visibility);
 }
 
-bool KmlGenerator::addPointInfomationVectorPoint(const std::vector<PointInfomation>& point_information_vector, std::string data_name)
+bool KmlGenerator::addPointVector2PointKML(const std::vector<Point>& point_vector, std::string data_name, int visibility)
 {
   kml_type_ =  KMLType::POINT;
 
@@ -407,9 +407,9 @@ bool KmlGenerator::addPointInfomationVectorPoint(const std::vector<PointInfomati
 
   data_count_++;
 
-  std::string data_str = PointInfomationVector2PointStr(point_information_vector, data_name);
+  std::string data_str = PointVector2PointStr(point_vector, data_name);
 
-  if (!addKmlPointBody(data_name, data_str)) return false;
+  if (!addKmlPointBody(data_name, data_str, visibility)) return false;
   return true;
 }
 

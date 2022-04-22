@@ -95,14 +95,16 @@ int main(int argc, char** argv) {
   std::string logo_link_url = "https://github.com/MapIV/eagleye/blob/main-ros1/docs/logo.png";
   KmlGenerator kml_generator(kml_name, name, logo_link_url);
 
-  kml_generator.setTimeInterval(0.1);
-  kml_generator.addNavSatFixMsgVectorLine(vector_fix, "GNSS Line");
+  int visibility = 1;
 
-  kml_generator.addNavSatFixMsgVectorPoint(vector_fix, "GNSS Point1");
+  kml_generator.setTimeInterval(0.1);
+  kml_generator.addNavSatFixMsgVectorLine(vector_fix, "GNSS Line", visibility);
+
+  kml_generator.addNavSatFixMsgVectorPoint(vector_fix, "GNSS Point1", visibility);
 
   kml_generator.setIntervalType(KmlGenerator::IntervalType::DISTANCE_INTERBAL);
   kml_generator.setPointInterval(10.0);
-  kml_generator.addNavSatFixMsgVectorPoint(vector_fix, "GNSS Point2");
+  kml_generator.addNavSatFixMsgVectorPoint(vector_fix, "GNSS Point2", visibility);
 
   kml_generator.outputKml();
 
