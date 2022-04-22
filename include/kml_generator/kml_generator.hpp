@@ -9,6 +9,14 @@
 
 #include <sensor_msgs/NavSatFix.h>
 
+namespace kml_utils
+{
+struct OtherInfo
+{
+  std::string name; // ex) name = "Velocity Scale Factor"
+  std::string value_str; // ex) value_str = "0.987684"
+};
+
 struct Point
 {
 public:
@@ -17,13 +25,11 @@ public:
   double latitude;  // [deg]
   double longitude; // [deg]
   double altitude;  // [m]
-  struct OtherInfo
-  {
-    std::string name; // ex) name = "Velocity Scale Factor"
-    std::string value_str; // ex) value_str = "0.987684"
-  };
+
   std::vector<OtherInfo> other_info_vector;
 };
+
+}
 
 class KmlGenerator
 {
@@ -37,10 +43,10 @@ public:
   bool addNavSatFixMsgVectorPoint(const std::vector<sensor_msgs::NavSatFix>&, std::string data_name, int visibility);
   bool addNavSatFixMsgVectorPoint(const std::vector<sensor_msgs::NavSatFix>&, int visibility);
 
-  bool addPointVector2LineKML(const std::vector<Point>&, std::string data_name, int visibility);
-  bool addPointVector2LineKML(const std::vector<Point>&, int visibility);
-  bool addPointVector2PointKML(const std::vector<Point>&, std::string data_name, int visibility);
-  bool addPointVector2PointKML(const std::vector<Point>&, int visibility);
+  bool addPointVector2LineKML(const std::vector<kml_utils::Point>&, std::string data_name, int visibility);
+  bool addPointVector2LineKML(const std::vector<kml_utils::Point>&, int visibility);
+  bool addPointVector2PointKML(const std::vector<kml_utils::Point>&, std::string data_name, int visibility);
+  bool addPointVector2PointKML(const std::vector<kml_utils::Point>&, int visibility);
 
   bool outputKml();
 
@@ -91,15 +97,15 @@ private:
   bool addKmlPointBody(std::string data_name, std::string data_str, int visibility);
 
   void LLH2StringInCondition(std::string & str,double & time_last, double ecef_pose_last[3],
-  const double time, double llh[3], int seq, double ecef_base_pose[3], std::vector<Point::OtherInfo> other_info_vector);
+  const double time, double llh[3], int seq, double ecef_base_pose[3], std::vector<kml_utils::OtherInfo> other_info_vector);
 
   std::string NavSatFixMsgVector2LineStr(const std::vector<sensor_msgs::NavSatFix>&);
   std::string LLHTimeSeq2PointStr(const int seq,const double time, double llh[3], const int sequence,
-    std::vector<Point::OtherInfo> other_info_vector);
+    std::vector<kml_utils::OtherInfo> other_info_vector);
   std::string NavSatFixMsgVector2PointStr(const std::vector<sensor_msgs::NavSatFix>&, std::string data_name);
 
-  std::string PointVector2LineStr(const std::vector<Point>&);
-  std::string PointVector2PointStr(const std::vector<Point>&, std::string data_name);
+  std::string PointVector2LineStr(const std::vector<kml_utils::Point>&);
+  std::string PointVector2PointStr(const std::vector<kml_utils::Point>&, std::string data_name);
 
   void llh2xyz(double*, double*);
   void xyz2enu(double ecef_pos[3], double ecef_base_pos[3], double enu_pos[3]);

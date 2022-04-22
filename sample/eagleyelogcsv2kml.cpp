@@ -25,7 +25,7 @@ ros::Time str2ROSTime(std::string input)
   return time;
 }
 
-std::vector<Point> EagleyeLogCsvtoVector(std::string csv_name)
+std::vector<kml_utils::Point> EagleyeLogCsvtoVector(std::string csv_name)
 {
   std::ifstream ifs(csv_name);
   if (!ifs)
@@ -34,7 +34,7 @@ std::vector<Point> EagleyeLogCsvtoVector(std::string csv_name)
     exit(1);
   }
 
-  std::vector<Point> vector_eagleye;
+  std::vector<kml_utils::Point> vector_eagleye;
   int cnt = 0;
   std::string line;
   while (getline(ifs, line))
@@ -45,7 +45,7 @@ std::vector<Point> EagleyeLogCsvtoVector(std::string csv_name)
       cnt++;
       continue;
     }
-    Point tmp_eagleye;
+    kml_utils::Point tmp_eagleye;
 
     std::vector<std::string> str_vec = split(line, ',');
 
@@ -55,11 +55,11 @@ std::vector<Point> EagleyeLogCsvtoVector(std::string csv_name)
     tmp_eagleye.longitude = std::stod(str_vec.at(108));
     tmp_eagleye.altitude = std::stod(str_vec.at(109));
 
-    Point::OtherInfo other_info0;
+    kml_utils::OtherInfo other_info0;
     other_info0.name = "Velocity Scale Factor";
     other_info0.value_str = str_vec.at(25);
 
-    Point::OtherInfo other_info1;
+    kml_utils::OtherInfo other_info1;
     other_info1.name = "Velocity Scale Factor Flag";
     other_info1.value_str = str_vec.at(32);
 
@@ -84,7 +84,7 @@ int main(int argc, char** argv) {
   std::string csv_name = argv[1];
   std::string kml_name = argv[2];
 
-  std::vector<Point> vector_point = EagleyeLogCsvtoVector(csv_name);
+  std::vector<kml_utils::Point> vector_point = EagleyeLogCsvtoVector(csv_name);
 
   std::string legend_name = "eagleye";
   std::string logo_link_url = "https://github.com/MapIV/eagleye/blob/main-ros1/docs/logo.png";
