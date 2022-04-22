@@ -11,6 +11,7 @@
 
 namespace kml_utils
 {
+
 struct OtherInfo
 {
   std::string name; // ex) name = "Velocity Scale Factor"
@@ -66,6 +67,10 @@ public:
   void setTimeInterval(const double time_interval); // [sec]
   void setPointInterval(const double point_interval); // [m]
   void setLineInterval(const double line_interval); // [m]
+  IntervalType getIntervalType();
+  double getTimeInterval();
+  double getPointInterval();
+  double getLineInterval();
 
   std::string make_double_string(double d);
 

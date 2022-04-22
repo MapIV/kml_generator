@@ -440,6 +440,26 @@ void KmlGenerator::setLineInterval(const double line_interval)
   line_interval_ = line_interval;
 }
 
+KmlGenerator::IntervalType KmlGenerator::getIntervalType()
+{
+  return interval_type_;
+}
+
+double KmlGenerator::getTimeInterval()
+{
+  return time_interval_;
+}
+
+double KmlGenerator::getPointInterval()
+{
+  return point_interval_;
+}
+
+double KmlGenerator::getLineInterval()
+{
+  return line_interval_;
+}
+
 std::string KmlGenerator::make_double_string(double d)
 {
   std::stringstream s;
