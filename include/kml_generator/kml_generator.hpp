@@ -56,10 +56,10 @@ public:
     LINE = 1,
   };
 
-  void setIntervalType(const IntervalType ip);
-  void setTimeInterval(const double time_interval);
-  void setPointInterval(const double point_interval);
-  void setLineInterval(const double line_interval);
+  void setIntervalType(const IntervalType ip); // IntervalType::TIME_INTERBAL or IntervalType::DISTANCE_INTERBAL
+  void setTimeInterval(const double time_interval); // [sec]
+  void setPointInterval(const double point_interval); // [m]
+  void setLineInterval(const double line_interval); // [m]
 
   std::string make_double_string(double d);
 
