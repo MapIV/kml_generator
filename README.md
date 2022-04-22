@@ -1,5 +1,10 @@
 # kml_generator
 
+kml_generator is a package for easily creating KML files.
+Please see the sample program example below for how to use it.
+Also see the public functions of the kml_generator class.
+https://github.com/MapIV/kml_generator/blob/main/include/kml_generator/kml_generator.hpp#L37-L68
+
 # example
 
 ## NavSatFix
