@@ -55,7 +55,7 @@ void KmlGenerator::initKml(std::string name)
 bool KmlGenerator::addKmlLineHeader(std::string data_name)
 {
   std::string tmp_header;
-  std::string color_str = color_list[(data_count_)%8];
+  std::string color_str = getColorCode();
   tmp_header =
       "<Style id=\"" + data_name + "\">\n"
       "\t<LineStyle>\n"
@@ -93,7 +93,7 @@ bool KmlGenerator::addKmlLineBody(std::string data_name, std::string data_str, i
 
 bool KmlGenerator::addKmlPointBody(std::string data_name, std::string data_str, int visibility)
 {
-  std::string color_str = color_list[(data_count_)%8];
+  std::string color_str = getColorCode();
   body_ +=  
           "<open>1</open>\n"
          "\t<Style id=\"" + data_name + "\">\n"
@@ -231,7 +231,8 @@ std::string KmlGenerator::PointVector2LineStr(const std::vector<kml_utils::Point
   return data_ss.str();
 }
 
-std::string KmlGenerator::LLHTimeSeq2PointStr(const int seq,const double time, double llh[3], const int sequence, std::vector<kml_utils::OtherInfo> other_info_vector)
+std::string KmlGenerator::LLHTimeSeq2PointStr(const int seq,const double time, double llh[3], const int sequence,
+  std::vector<kml_utils::OtherInfo> other_info_vector)
 {
   std::string data;
   data =
@@ -318,19 +319,20 @@ std::string KmlGenerator::PointVector2PointStr(const std::vector<kml_utils::Poin
 }
 
 
-bool KmlGenerator::addNavSatFixMsgVectorLine(const std::vector<sensor_msgs::NavSatFix>& fix_msg_vector, int visibility)
+bool KmlGenerator::addNavSatFixMsgVectorLine(const std::vector<sensor_msgs::NavSatFix>& fix_msg_vector, int visibility, ColorType ct)
 {
   std::string data_str = NavSatFixMsgVector2LineStr(fix_msg_vector);
   std::string data_name;
 
   data_name = "DATANUM_" + std::to_string(data_count_);
 
-  return addNavSatFixMsgVectorLine(fix_msg_vector, data_name, visibility);
+  return addNavSatFixMsgVectorLine(fix_msg_vector, data_name, visibility, ct);
 }
 
-bool KmlGenerator::addNavSatFixMsgVectorLine(const std::vector<sensor_msgs::NavSatFix>& fix_msg_vector, std::string data_name, int visibility)
+bool KmlGenerator::addNavSatFixMsgVectorLine(const std::vector<sensor_msgs::NavSatFix>& fix_msg_vector, std::string data_name, int visibility, ColorType ct)
 {
   kml_type_ =  KMLType::LINE;
+  color_type_ = ct;
 
   data_name.erase(std::remove(data_name.begin(), data_name.end(), ' '), data_name.end());
   std::string data_str = NavSatFixMsgVector2LineStr(fix_msg_vector);
@@ -341,19 +343,20 @@ bool KmlGenerator::addNavSatFixMsgVectorLine(const std::vector<sensor_msgs::NavS
   return true;
 }
 
-bool KmlGenerator::addPointVector2LineKML(const std::vector<kml_utils::Point> & point_vector, int visibility)
+bool KmlGenerator::addPointVector2LineKML(const std::vector<kml_utils::Point> & point_vector, int visibility, ColorType ct)
 {
   std::string data_str = PointVector2LineStr(point_vector);
   std::string data_name;
 
   data_name = "DATANUM_" + std::to_string(data_count_);
 
-  return addPointVector2LineKML(point_vector, data_name, visibility);
+  return addPointVector2LineKML(point_vector, data_name, visibility, ct);
 }
 
-bool KmlGenerator::addPointVector2LineKML(const std::vector<kml_utils::Point> & point_vector, std::string data_name, int visibility)
+bool KmlGenerator::addPointVector2LineKML(const std::vector<kml_utils::Point> & point_vector, std::string data_name, int visibility, ColorType ct)
 {
   kml_type_ =  KMLType::LINE;
+  color_type_ = ct;
 
   data_name.erase(std::remove(data_name.begin(), data_name.end(), ' '), data_name.end());
   std::string data_str = PointVector2LineStr(point_vector);
@@ -364,19 +367,20 @@ bool KmlGenerator::addPointVector2LineKML(const std::vector<kml_utils::Point> & 
   return true;
 }
 
-bool KmlGenerator::addNavSatFixMsgVectorPoint(const std::vector<sensor_msgs::NavSatFix>& fix_msg_vector, int visibility)
+bool KmlGenerator::addNavSatFixMsgVectorPoint(const std::vector<sensor_msgs::NavSatFix>& fix_msg_vector, int visibility, ColorType ct)
 {
 
   std::string data_name;
 
   data_name = "DATANUM_" + std::to_string(data_count_);
 
-  return addNavSatFixMsgVectorPoint(fix_msg_vector, data_name, visibility);
+  return addNavSatFixMsgVectorPoint(fix_msg_vector, data_name, visibility, ct);
 }
 
-bool KmlGenerator::addNavSatFixMsgVectorPoint(const std::vector<sensor_msgs::NavSatFix>& fix_msg_vector, std::string data_name, int visibility)
+bool KmlGenerator::addNavSatFixMsgVectorPoint(const std::vector<sensor_msgs::NavSatFix>& fix_msg_vector, std::string data_name, int visibility, ColorType ct)
 {
   kml_type_ =  KMLType::POINT;
+  color_type_ = ct;
 
   data_name.erase(std::remove(data_name.begin(), data_name.end(), ' '), data_name.end());
   data_name_ = data_name;
@@ -389,18 +393,19 @@ bool KmlGenerator::addNavSatFixMsgVectorPoint(const std::vector<sensor_msgs::Nav
   return true;
 }
 
-bool KmlGenerator::addPointVector2PointKML(const std::vector<kml_utils::Point> & point_vector, int visibility)
+bool KmlGenerator::addPointVector2PointKML(const std::vector<kml_utils::Point> & point_vector, int visibility, ColorType ct)
 {
   std::string data_name;
 
   data_name = "DATANUM_" + std::to_string(data_count_);
 
-  return addPointVector2PointKML(point_vector, data_name, visibility);
+  return addPointVector2PointKML(point_vector, data_name, visibility, ct);
 }
 
-bool KmlGenerator::addPointVector2PointKML(const std::vector<kml_utils::Point> & point_vector, std::string data_name, int visibility)
+bool KmlGenerator::addPointVector2PointKML(const std::vector<kml_utils::Point> & point_vector, std::string data_name, int visibility, ColorType ct)
 {
   kml_type_ =  KMLType::POINT;
+  color_type_ = ct;
 
   data_name.erase(std::remove(data_name.begin(), data_name.end(), ' '), data_name.end());
   data_name_ = data_name;
@@ -459,6 +464,39 @@ double KmlGenerator::getLineInterval()
 {
   return line_interval_;
 }
+
+std::string KmlGenerator::getColorCode()
+{
+  std::string color_code;
+  switch (color_type_) {
+    case ColorType::RED:
+      color_code = "ff0000ff";
+      break;
+    case ColorType::GREEN:
+      color_code = "ff00ff00";
+      break;
+    case ColorType::BLUE:
+      color_code = "ffff0000";
+      break;
+    case ColorType::PURPLE:
+      color_code = "ffff55aa";
+      break;
+    case ColorType::CYAN:
+      color_code = "ffffff00";
+      break;
+    case ColorType::MAGENTA:
+      color_code = "ff7700ff";
+      break;
+    case ColorType::ORANGE:
+      color_code = "ff00aaff";
+      break;
+    case ColorType::WHITE:
+      color_code = "ffffffff";
+      break;
+  }
+  return color_code;
+}
+
 
 std::string KmlGenerator::make_double_string(double d)
 {

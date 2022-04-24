@@ -93,14 +93,14 @@ int main(int argc, char** argv) {
   int visibility = 1;
 
   kml_generator.setTimeInterval(1.0);
-  kml_generator.addPointVector2LineKML(vector_point, "Eagleye Line", visibility);
+  kml_generator.addPointVector2LineKML(vector_point, "Eagleye Line", visibility, KmlGenerator::ColorType::RED);
 
   kml_generator.setIntervalType(KmlGenerator::IntervalType::DISTANCE_INTERBAL);
 
-  kml_generator.addPointVector2PointKML(vector_point, "Eagleye Point1", visibility);
+  kml_generator.addPointVector2PointKML(vector_point, "Eagleye Point1", visibility, KmlGenerator::ColorType::BLUE);
 
   kml_generator.setPointInterval(10.0);
-  kml_generator.addPointVector2PointKML(vector_point, "Eagleye Point2", visibility);
+  kml_generator.addPointVector2PointKML(vector_point, "Eagleye Point2", visibility, KmlGenerator::ColorType::GREEN);
 
   kml_generator.outputKml();
 

@@ -98,13 +98,13 @@ int main(int argc, char** argv) {
   int visibility = 1;
 
   kml_generator.setTimeInterval(0.1);
-  kml_generator.addNavSatFixMsgVectorLine(vector_fix, "GNSS Line", visibility);
+  kml_generator.addNavSatFixMsgVectorLine(vector_fix, "GNSS Line", visibility, KmlGenerator::ColorType::RED);
 
-  kml_generator.addNavSatFixMsgVectorPoint(vector_fix, "GNSS Point1", visibility);
+  kml_generator.addNavSatFixMsgVectorPoint(vector_fix, "GNSS Point1", visibility, KmlGenerator::ColorType::BLUE);
 
   kml_generator.setIntervalType(KmlGenerator::IntervalType::DISTANCE_INTERBAL);
   kml_generator.setPointInterval(10.0);
-  kml_generator.addNavSatFixMsgVectorPoint(vector_fix, "GNSS Point2", visibility);
+  kml_generator.addNavSatFixMsgVectorPoint(vector_fix, "GNSS Point2", visibility, KmlGenerator::ColorType::GREEN);
 
   kml_generator.outputKml();
 

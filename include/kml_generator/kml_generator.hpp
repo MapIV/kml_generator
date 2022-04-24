@@ -39,18 +39,6 @@ public:
   KmlGenerator(std::string file_name);
   KmlGenerator(std::string file_name, std::string logo_name, std::string log_link_url);
 
-  bool addNavSatFixMsgVectorLine(const std::vector<sensor_msgs::NavSatFix>&, std::string data_name, int visibility);
-  bool addNavSatFixMsgVectorLine(const std::vector<sensor_msgs::NavSatFix>&, int visibility);
-  bool addNavSatFixMsgVectorPoint(const std::vector<sensor_msgs::NavSatFix>&, std::string data_name, int visibility);
-  bool addNavSatFixMsgVectorPoint(const std::vector<sensor_msgs::NavSatFix>&, int visibility);
-
-  bool addPointVector2LineKML(const std::vector<kml_utils::Point>&, std::string data_name, int visibility);
-  bool addPointVector2LineKML(const std::vector<kml_utils::Point>&, int visibility);
-  bool addPointVector2PointKML(const std::vector<kml_utils::Point>&, std::string data_name, int visibility);
-  bool addPointVector2PointKML(const std::vector<kml_utils::Point>&, int visibility);
-
-  bool outputKml();
-
   enum class IntervalType
   {
     TIME_INTERBAL = 0,
@@ -62,6 +50,30 @@ public:
     POINT = 0,
     LINE = 1,
   };
+
+  enum class ColorType
+  {
+    RED = 0,
+    GREEN = 1,
+    BLUE = 2,
+    PURPLE = 3,
+    CYAN = 4,
+    MAGENTA = 5,
+    ORANGE = 6,
+    WHITE = 7,
+  };
+
+  bool addNavSatFixMsgVectorLine(const std::vector<sensor_msgs::NavSatFix>&, std::string data_name, int visibility, ColorType ct);
+  bool addNavSatFixMsgVectorLine(const std::vector<sensor_msgs::NavSatFix>&, int visibility, ColorType ct);
+  bool addNavSatFixMsgVectorPoint(const std::vector<sensor_msgs::NavSatFix>&, std::string data_name, int visibility, ColorType ct);
+  bool addNavSatFixMsgVectorPoint(const std::vector<sensor_msgs::NavSatFix>&, int visibility, ColorType ct);
+
+  bool addPointVector2LineKML(const std::vector<kml_utils::Point>&, std::string data_name, int visibility, ColorType ct);
+  bool addPointVector2LineKML(const std::vector<kml_utils::Point>&, int visibility, ColorType ct);
+  bool addPointVector2PointKML(const std::vector<kml_utils::Point>&, std::string data_name, int visibility, ColorType ct);
+  bool addPointVector2PointKML(const std::vector<kml_utils::Point>&, int visibility, ColorType ct);
+
+  bool outputKml();
 
   void setIntervalType(const IntervalType ip); // IntervalType::TIME_INTERBAL or IntervalType::DISTANCE_INTERBAL
   void setTimeInterval(const double time_interval); // [sec]
@@ -87,13 +99,10 @@ private:
   IntervalType interval_type_ = IntervalType::TIME_INTERBAL; // time : 0, distance: 1
   KMLType kml_type_;
   std::string data_name_;
+  ColorType color_type_;
   double time_interval_ = 0.2; // [sec]
   double point_interval_ = 5.0; // [m]
   double line_interval_ = 1.0; // [m]
-
-  std::string color_list[8] 
-    = {"ff0000ff","ff00ff00","ffff0000","ffff55aa","ffffff00","ff7700ff","ff00aaff","ffffffff"};
-    //    Red        Green      Blue      Purple      Cyan      Magenta    Orange      White
 
   void initKml(std::string name);
 
@@ -111,6 +120,8 @@ private:
 
   std::string PointVector2LineStr(const std::vector<kml_utils::Point>&);
   std::string PointVector2PointStr(const std::vector<kml_utils::Point>&, std::string data_name);
+
+  std::string getColorCode();
 
   void llh2xyz(double*, double*);
   void xyz2enu(double ecef_pos[3], double ecef_base_pos[3], double enu_pos[3]);
