@@ -245,13 +245,13 @@ std::string KmlGenerator::LLHTimeSeq2PointStr(const int seq,const double time, d
                 \t\t\t\t<TR ALIGN=RIGHT><TD ALIGN=LEFT>Sequence Number: </TD><TD>" + std::to_string(sequence) + "</TD></TR>\n"
                 +
                 "\t\t\t\t\t\t\t\t<TR ALIGN=RIGHT><TD ALIGN=LEFT>Timestamp: </TD><TD>"
-            + make_double_string(time) + "</TD></TR>\n\
+            + makeDouble2String(time) + "</TD></TR>\n\
                  \t\t\t\t<TR ALIGN=RIGHT><TD ALIGN=LEFT>lat: </TD><TD>"
-            + make_double_string(llh[0]) + "</TD></TR>\n\
+            + makeDouble2String(llh[0]) + "</TD></TR>\n\
                 \t\t\t\t<TR ALIGN=RIGHT><TD ALIGN=LEFT>lon: </TD><TD>"
-            + make_double_string(llh[1]) + "</TD></TR>\n\
+            + makeDouble2String(llh[1]) + "</TD></TR>\n\
                 \t\t\t\t<TR ALIGN=RIGHT><TD ALIGN=LEFT>height: </TD><TD>"
-            + make_double_string(llh[2]) + "</TD></TR>\n";
+            + makeDouble2String(llh[2]) + "</TD></TR>\n";
   if(!other_info_vector.empty())
   {
     for(kml_utils::OtherInfo oi : other_info_vector){
@@ -265,9 +265,9 @@ std::string KmlGenerator::LLHTimeSeq2PointStr(const int seq,const double time, d
             + "</styleUrl>\n"
                 "\t\t<Point>\n"
                 "t\t\t<coordinates>"
-            + make_double_string(llh[1]) + ","
-            + make_double_string(llh[0]) + ","
-            + make_double_string(llh[2]) + ","
+            + makeDouble2String(llh[1]) + ","
+            + makeDouble2String(llh[0]) + ","
+            + makeDouble2String(llh[2]) + ","
             + "</coordinates>\n"
                 "\t\t</Point>\n"
                 "\t</Placemark>";
@@ -497,11 +497,16 @@ std::string KmlGenerator::getColorCode()
   return color_code;
 }
 
-
-std::string KmlGenerator::make_double_string(double d)
+std::string KmlGenerator::makeDouble2String(double d)
 {
   std::stringstream s;
   s.precision(std::numeric_limits<double>::max_digits10);
   s << std::scientific << d;
   return s.str();  
+}
+
+std::string KmlGenerator::makeBool2String(bool b)
+{
+  std::string str = b ?  "True" : "False";
+  return str;
 }

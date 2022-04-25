@@ -84,7 +84,8 @@ public:
   double getPointInterval();
   double getLineInterval();
 
-  std::string make_double_string(double d);
+  std::string makeDouble2String(double d);
+  std::string makeBool2String(bool b);
 
 private:
   // Variables
