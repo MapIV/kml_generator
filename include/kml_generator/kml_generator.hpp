@@ -30,6 +30,11 @@ public:
   std::vector<OtherInfo> other_info_vector;
 };
 
+void addOtherInformation(Point & point, std::string other_info_name, std::string other_info_value_str);
+
+std::string makeDouble2String(double d);
+std::string makeBool2String(bool b);
+
 }
 
 class KmlGenerator
@@ -83,9 +88,6 @@ public:
   double getTimeInterval();
   double getPointInterval();
   double getLineInterval();
-
-  std::string makeDouble2String(double d);
-  std::string makeBool2String(bool b);
 
 private:
   // Variables

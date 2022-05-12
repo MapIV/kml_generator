@@ -1,5 +1,32 @@
 #include <kml_generator/kml_generator.hpp>
 
+namespace kml_utils
+{
+
+void addOtherInformation(Point & point, std::string other_info_name, std::string other_info_value_str)
+{
+  OtherInfo other_info;
+  other_info.name = other_info_name;
+  other_info.value_str = other_info_value_str;
+  point.other_info_vector.push_back(other_info);
+};
+
+std::string makeDouble2String(double d)
+{
+  std::stringstream s;
+  s.precision(std::numeric_limits<double>::max_digits10);
+  s << std::scientific << d;
+  return s.str();
+}
+
+std::string makeBool2String(bool b)
+{
+  std::string str = b ?  "True" : "False";
+  return str;
+}
+
+}
+
 KmlGenerator::KmlGenerator()
 {
   kml_file_ofs_.open(file_name_, std::ios::out);
@@ -245,13 +272,13 @@ std::string KmlGenerator::LLHTimeSeq2PointStr(const int seq,const double time, d
                 \t\t\t\t<TR ALIGN=RIGHT><TD ALIGN=LEFT>Sequence Number: </TD><TD>" + std::to_string(sequence) + "</TD></TR>\n"
                 +
                 "\t\t\t\t\t\t\t\t<TR ALIGN=RIGHT><TD ALIGN=LEFT>Timestamp: </TD><TD>"
-            + makeDouble2String(time) + "</TD></TR>\n\
+            + kml_utils::makeDouble2String(time) + "</TD></TR>\n\
                  \t\t\t\t<TR ALIGN=RIGHT><TD ALIGN=LEFT>lat: </TD><TD>"
-            + makeDouble2String(llh[0]) + "</TD></TR>\n\
+            + kml_utils::makeDouble2String(llh[0]) + "</TD></TR>\n\
                 \t\t\t\t<TR ALIGN=RIGHT><TD ALIGN=LEFT>lon: </TD><TD>"
-            + makeDouble2String(llh[1]) + "</TD></TR>\n\
+            + kml_utils::makeDouble2String(llh[1]) + "</TD></TR>\n\
                 \t\t\t\t<TR ALIGN=RIGHT><TD ALIGN=LEFT>height: </TD><TD>"
-            + makeDouble2String(llh[2]) + "</TD></TR>\n";
+            + kml_utils::makeDouble2String(llh[2]) + "</TD></TR>\n";
   if(!other_info_vector.empty())
   {
     for(kml_utils::OtherInfo oi : other_info_vector){
@@ -265,9 +292,9 @@ std::string KmlGenerator::LLHTimeSeq2PointStr(const int seq,const double time, d
             + "</styleUrl>\n"
                 "\t\t<Point>\n"
                 "t\t\t<coordinates>"
-            + makeDouble2String(llh[1]) + ","
-            + makeDouble2String(llh[0]) + ","
-            + makeDouble2String(llh[2]) + ","
+            + kml_utils::makeDouble2String(llh[1]) + ","
+            + kml_utils::makeDouble2String(llh[0]) + ","
+            + kml_utils::makeDouble2String(llh[2]) + ","
             + "</coordinates>\n"
                 "\t\t</Point>\n"
                 "\t</Placemark>";
@@ -495,18 +522,4 @@ std::string KmlGenerator::getColorCode()
       break;
   }
   return color_code;
-}
-
-std::string KmlGenerator::makeDouble2String(double d)
-{
-  std::stringstream s;
-  s.precision(std::numeric_limits<double>::max_digits10);
-  s << std::scientific << d;
-  return s.str();  
-}
-
-std::string KmlGenerator::makeBool2String(bool b)
-{
-  std::string str = b ?  "True" : "False";
-  return str;
 }
