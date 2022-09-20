@@ -13,7 +13,7 @@ find_package(catkin REQUIRED COMPONENTS
 )
 
 catkin_package(
-  CATKIN_DEPENDS
+  CATKIN_DEPENDS sensor_msgs
   INCLUDE_DIRS include
   LIBRARIES kml_generator
 )
