@@ -52,3 +52,14 @@ target_link_libraries(eagleyelogcsv2kml
   ${catkin_LIBRARIES}
   kml_generator
 )
+
+install(DIRECTORY include/kml_generator/
+  DESTINATION include/kml_generator/
+  FILES_MATCHING PATTERN "*.hpp"
+)
+
+install(TARGETS kml_generator
+  ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+  LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+  RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+)
