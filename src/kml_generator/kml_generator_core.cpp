@@ -29,27 +29,17 @@ std::string makeBool2String(bool b)
 
 KmlGenerator::KmlGenerator()
 {
-  kml_file_ofs_.open(file_name_, std::ios::out);
-  std::cout << "Output file = " << file_name_ << std::endl;
-  initKml(file_name_);
 }
 
 KmlGenerator::KmlGenerator(std::string file_name)
 {
   file_name_ = file_name;
-  kml_file_ofs_.open(file_name_, std::ios::out);
-  std::cout << "Output file = " << file_name_ << std::endl;
-  initKml(file_name_);
 }
 
 KmlGenerator::KmlGenerator(std::string file_name, std::string logo_name, std::string log_link_url)
 {
   file_name_ = file_name;
   log_link_url_ = log_link_url;
-  kml_file_ofs_.open(file_name_, std::ios::out);
-  std::cout << "Output file = " << file_name_ << std::endl;
-  initKml(logo_name);
-
 }
 
 void KmlGenerator::initKml(std::string name)
@@ -464,6 +454,7 @@ bool KmlGenerator::outputKml()
 void KmlGenerator::setFileName(const std::string& file_name)
 {
   file_name_ = file_name;
+  std::cout << "filename: " << file_name_ << std::endl;
 }
 
 void KmlGenerator::setIntervalType(const IntervalType it)
