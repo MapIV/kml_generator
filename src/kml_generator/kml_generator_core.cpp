@@ -54,13 +54,15 @@ KmlGenerator::KmlGenerator(std::string file_name, std::string logo_name, std::st
 
 void KmlGenerator::initKml(std::string name)
 {
-   header_ =
+    header_ =
       "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
       "<kml xmlns=\"http://earth.google.com/kml/2.2\">\n"
       "<Document>\n"
-      "<name>"+ name +"</name>\n\n"
-      +(
-      log_link_url_.empty() ? "":
+      "<name>"+ name +"</name>\n\n";
+    
+    if (!log_link_url_.empty())
+    {
+      header_ = header_ +(
       "<ScreenOverlay>\n"
       "\t<name>"+ name +" logo</name>\n"
       "\t<visibility>1</visibility>\n"
@@ -71,10 +73,10 @@ void KmlGenerator::initKml(std::string name)
       "\t<screenXY x=\"0\" y=\"0\" xunits=\"fraction\" yunits=\"fraction\"/>\n"
       "\t<size x=\"260.6\" y=\"56.0\" xunits=\"pixels\" yunits=\"pixels\"/>\n"
       "</ScreenOverlay>\n\n"
-      )
-      ;
+      );
+    }
     
-   footer_ =
+    footer_ =
       "</Document>\n"
       "</kml>\n";
 }
@@ -445,11 +447,23 @@ bool KmlGenerator::addPointVector2PointKML(const std::vector<kml_utils::Point> &
   return true;
 }
 
+void KmlGenerator::openKml()
+{
+  kml_file_ofs_.open(file_name_, std::ios::out);
+  std::cout << "Output file = " << file_name_ << std::endl;
+  initKml(file_name_);
+}
+
 bool KmlGenerator::outputKml()
 {
   kml_file_ofs_ << header_ << body_ <<  footer_ << std::endl;
 
   return true;
+}
+
+void KmlGenerator::setFileName(const std::string& file_name)
+{
+  file_name_ = file_name;
 }
 
 void KmlGenerator::setIntervalType(const IntervalType it)

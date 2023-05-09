@@ -78,8 +78,10 @@ public:
   bool addPointVector2PointKML(const std::vector<kml_utils::Point>&, std::string data_name, int visibility, ColorType ct);
   bool addPointVector2PointKML(const std::vector<kml_utils::Point>&, int visibility, ColorType ct);
 
+  void openKml();
   bool outputKml();
 
+  void setFileName(const std::string& file_name);
   void setIntervalType(const IntervalType ip); // IntervalType::TIME_INTERBAL or IntervalType::DISTANCE_INTERBAL
   void setTimeInterval(const double time_interval); // [sec]
   void setPointInterval(const double point_interval); // [m]
