@@ -79,20 +79,30 @@ void KmlGenerator::initKml(std::string name)
       "</kml>\n";
 }
 
-bool KmlGenerator::addKmlLineHeader(std::string data_name)
+bool KmlGenerator::addKmlFolderBegin(const kml_utils::Header& header)
 {
-  std::string tmp_header;
-  std::string color_str = getColorCode();
-  tmp_header =
-      "<Style id=\"" + data_name + "\">\n"
-      "\t<LineStyle>\n"
-      "\t\t<color> " + color_str + " </color>\n"
-      "\t\t<width>5.00</width>\n"
-      "\t</LineStyle>\n"
-      "</Style>\n\n";
-  header_ +=tmp_header;
+  std::string tmp_body;
+  tmp_body = 
+      "\t<Folder>\n"
+      "\t\t<name>" + header.name + "</name>\n"
+      "\t\t<description>" + header.description + "</description>\n\n";
+  
+  body_ += tmp_body;
 
   return true;
+}
+
+bool KmlGenerator::addKmlFolderEnd()
+{
+  body_ += "\t</Folder>\n\n";
+
+  return true;
+}
+
+bool KmlGenerator::addKmlLineHeader(std::string data_name)
+{
+  std::string color_str = getColorCode();
+  return addLineStyle(data_name, color_str);
 }
 
 bool KmlGenerator::addKmlLineBody(std::string data_name, std::string data_str, int visibility)
@@ -110,6 +120,34 @@ bool KmlGenerator::addKmlLineBody(std::string data_name, std::string data_str, i
       "\t\t<altitudeMode>clampToGround</altitudeMode>\n"
       "\t\t<coordinates>\n"
       + data_str +
+      "\t\t</coordinates>\n"
+      "\t</LineString>\n"
+      "\t</Placemark>\n\n";
+  body_ += tmp_body;
+
+  return true;
+}
+
+bool KmlGenerator::addKmlLineBody(const kml_utils::Line& line)
+{
+  std::string data = PointVector2LineStr(line.points);
+  std::cout << line.points.size() << std::endl;
+  std::cout << data << std::endl;
+  std::string line_style = getLineStyle(line.color);
+
+  std::string tmp_body;
+  tmp_body =
+      "\t<Placemark>\n"
+      "\t<name> " + line.header.name + " </name>\n"
+      "\t<visibility>1</visibility>\n"
+      "\t<description>" + line.header.description + "</description>\n"
+      "\t<styleUrl>#" + line_style + "</styleUrl>\n"
+      "\t<LineString>\n"
+      "\t\t<extrude>0</extrude>\n"
+      "\t\t<tessellate>1</tessellate>\n"
+      "\t\t<altitudeMode>clampToGround</altitudeMode>\n"
+      "\t\t<coordinates>\n"
+      + data +
       "\t\t</coordinates>\n"
       "\t</LineString>\n"
       "\t</Placemark>\n\n";
@@ -250,6 +288,7 @@ std::string KmlGenerator::PointVector2LineStr(const std::vector<kml_utils::Point
     double time = point_vector[i].time;
     double llh[3] = {point_vector[i].latitude, point_vector[i].longitude, point_vector[i].altitude};
     int seq = point_vector[i].seq;
+    std::cout << std::setprecision(15) << time << ", " << llh[0] << ", " << llh[1] << ", " << llh[2] << std::endl;
     std::string str;
     LLH2StringInCondition(str,time_last,ecef_pose_last, time, llh, seq, ecef_base_pose, other_info_vector);
     data_ss << str;
@@ -394,6 +433,22 @@ bool KmlGenerator::addPointVector2LineKML(const std::vector<kml_utils::Point> & 
   return true;
 }
 
+bool KmlGenerator::addLinesKML(const kml_utils::Lines& lines)
+{
+  kml_type_ = KMLType::LINE;
+  if (!addAllLineStyles()) return false;
+  if (!addKmlFolderBegin(lines.header)) return false;
+
+  for (const auto& line : lines.lines)
+  {
+    if (!addKmlLineBody(line)) return false;
+  }
+
+  if (!addKmlFolderEnd()) return false;
+
+  return true;
+}
+
 bool KmlGenerator::addNavSatFixMsgVectorPoint(const std::vector<sensor_msgs::NavSatFix>& fix_msg_vector, int visibility, ColorType ct)
 {
 
@@ -522,4 +577,73 @@ std::string KmlGenerator::getColorCode()
       break;
   }
   return color_code;
+}
+
+bool KmlGenerator::addLineStyle(const std::string& data_name, const std::string& color_code)
+{
+  std::string line_style;
+  line_style =
+      "<Style id=\"" + data_name + "\">\n"
+      "\t<LineStyle>\n"
+      "\t\t<color> " + color_code + " </color>\n"
+      "\t\t<width>5.00</width>\n"
+      "\t</LineStyle>\n"
+      "</Style>\n\n";
+  header_ += line_style;
+
+  return true;
+}
+
+bool KmlGenerator::addAllLineStyles()
+{
+  static bool already_done = false;
+
+  if (!already_done)
+  {
+    if (!addLineStyle(kml_utils::line_style_red, "ff0000ff"))
+      return false;
+    if (!addLineStyle(kml_utils::line_style_green, "ff00ff00"))
+      return false;
+    if (!addLineStyle(kml_utils::line_style_blue, "ffff0000"))
+      return false;
+    if (!addLineStyle(kml_utils::line_style_purple, "ffff55aa"))
+      return false;
+    if (!addLineStyle(kml_utils::line_style_cyan, "ffffff00"))
+      return false;
+    if (!addLineStyle(kml_utils::line_style_magenta, "ff7700ff"))
+      return false;
+    if (!addLineStyle(kml_utils::line_style_orange, "ff00aaff"))
+      return false;
+    if (!addLineStyle(kml_utils::line_style_white, "ffffffff"))
+      return false;
+    
+    already_done = true;
+  }
+
+  return true;
+}
+
+std::string KmlGenerator::getLineStyle(const kml_utils::ColorType color_type)
+{
+  switch (color_type)
+  {
+    case kml_utils::ColorType::RED:
+      return kml_utils::line_style_red;
+    case kml_utils::ColorType::GREEN:
+      return kml_utils::line_style_green;
+    case kml_utils::ColorType::BLUE:
+      return kml_utils::line_style_blue;
+    case kml_utils::ColorType::PURPLE:
+      return kml_utils::line_style_purple;
+    case kml_utils::ColorType::CYAN:
+      return kml_utils::line_style_cyan;
+    case kml_utils::ColorType::MAGENTA:
+      return kml_utils::line_style_magenta;
+    case kml_utils::ColorType::ORANGE:
+      return kml_utils::line_style_orange;
+    case kml_utils::ColorType::WHITE:
+      return kml_utils::line_style_white;
+  }
+
+  return kml_utils::line_style_red;
 }

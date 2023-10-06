@@ -9,32 +9,14 @@
 
 #include <sensor_msgs/NavSatFix.h>
 
+#include "kml_generator/common.hpp"
+
 namespace kml_utils
 {
-
-struct OtherInfo
-{
-  std::string name; // ex) name = "Velocity Scale Factor"
-  std::string value_str; // ex) value_str = "0.987684"
-};
-
-struct Point
-{
-public:
-  int seq = 0; // [sequence number]
-  double time;      // [sec]
-  double latitude;  // [deg]
-  double longitude; // [deg]
-  double altitude;  // [m]
-
-  std::vector<OtherInfo> other_info_vector;
-};
-
 void addOtherInformation(Point & point, std::string other_info_name, std::string other_info_value_str);
 
 std::string makeDouble2String(double d);
 std::string makeBool2String(bool b);
-
 }
 
 class KmlGenerator
@@ -78,6 +60,8 @@ public:
   bool addPointVector2PointKML(const std::vector<kml_utils::Point>&, std::string data_name, int visibility, ColorType ct);
   bool addPointVector2PointKML(const std::vector<kml_utils::Point>&, int visibility, ColorType ct);
 
+  bool addLinesKML(const kml_utils::Lines& lines);
+
   bool outputKml();
 
   void setIntervalType(const IntervalType ip); // IntervalType::TIME_INTERBAL or IntervalType::DISTANCE_INTERBAL
@@ -109,8 +93,11 @@ private:
 
   void initKml(std::string name);
 
+  bool addKmlFolderBegin(const kml_utils::Header& header);
+  bool addKmlFolderEnd();
   bool addKmlLineHeader(std::string data_name);
   bool addKmlLineBody(std::string data_name, std::string data_str, int visibility);
+  bool addKmlLineBody(const kml_utils::Line& line);
   bool addKmlPointBody(std::string data_name, std::string data_str, int visibility);
 
   void LLH2StringInCondition(std::string & str,double & time_last, double ecef_pose_last[3],
@@ -130,6 +117,9 @@ private:
   void xyz2enu(double ecef_pos[3], double ecef_base_pos[3], double enu_pos[3]);
   void ecef2llh(double ecef_pos[3], double llh_pos[3]);
 
+  bool addLineStyle(const std::string& data_name, const std::string& color_code);
+  bool addAllLineStyles();
+  std::string getLineStyle(const kml_utils::ColorType color_type);
 };
 
 #endif
