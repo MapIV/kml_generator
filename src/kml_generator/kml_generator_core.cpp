@@ -131,8 +131,6 @@ bool KmlGenerator::addKmlLineBody(std::string data_name, std::string data_str, i
 bool KmlGenerator::addKmlLineBody(const kml_utils::Line& line)
 {
   std::string data = PointVector2LineStr(line.points);
-  std::cout << line.points.size() << std::endl;
-  std::cout << data << std::endl;
   std::string line_style = getLineStyle(line.color);
 
   std::string tmp_body;
@@ -288,7 +286,6 @@ std::string KmlGenerator::PointVector2LineStr(const std::vector<kml_utils::Point
     double time = point_vector[i].time;
     double llh[3] = {point_vector[i].latitude, point_vector[i].longitude, point_vector[i].altitude};
     int seq = point_vector[i].seq;
-    std::cout << std::setprecision(15) << time << ", " << llh[0] << ", " << llh[1] << ", " << llh[2] << std::endl;
     std::string str;
     LLH2StringInCondition(str,time_last,ecef_pose_last, time, llh, seq, ecef_base_pose, other_info_vector);
     data_ss << str;
