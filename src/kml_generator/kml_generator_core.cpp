@@ -73,7 +73,7 @@ void KmlGenerator::initKml(std::string name)
       "</ScreenOverlay>\n\n"
       )
       ;
-    
+
    footer_ =
       "</Document>\n"
       "</kml>\n";
@@ -82,11 +82,11 @@ void KmlGenerator::initKml(std::string name)
 bool KmlGenerator::addKmlFolderBegin(const kml_utils::Header& header)
 {
   std::string tmp_body;
-  tmp_body = 
+  tmp_body =
       "\t<Folder>\n"
       "\t\t<name>" + header.name + "</name>\n"
       "\t\t<description>" + header.description + "</description>\n\n";
-  
+
   body_ += tmp_body;
 
   return true;
@@ -157,7 +157,7 @@ bool KmlGenerator::addKmlLineBody(const kml_utils::Line& line)
 bool KmlGenerator::addKmlPointBody(std::string data_name, std::string data_str, int visibility)
 {
   std::string color_str = getColorCode();
-  body_ +=  
+  body_ +=
           "<open>1</open>\n"
          "\t<Style id=\"" + data_name + "\">\n"
           "\t\t<IconStyle>\n"
@@ -214,7 +214,7 @@ void KmlGenerator::LLH2StringInCondition(std::string & str,double & time_last, d
 
       double diff_pose[2] ={enu_pose[0] - enu_pose_last[0], enu_pose[1] - enu_pose_last[1]};
       double distance = sqrt(pow(diff_pose[0], 2.0) + pow(diff_pose[1], 2.0));
-      
+
       if (kml_type_ ==  KMLType::LINE)
       {
         update_flag = distance > line_interval_;
@@ -241,7 +241,7 @@ void KmlGenerator::LLH2StringInCondition(std::string & str,double & time_last, d
       {
         str += LLHTimeSeq2PointStr(seq, time, llh, seq, other_info_vector);
       }
-      
+
       time_last = time;
       ecef_pose_last[0] = ecef_pose[0];
       ecef_pose_last[1] = ecef_pose[1];
@@ -613,7 +613,7 @@ bool KmlGenerator::addAllLineStyles()
       return false;
     if (!addLineStyle(kml_utils::line_style_white, "ffffffff"))
       return false;
-    
+
     already_done = true;
   }
 
