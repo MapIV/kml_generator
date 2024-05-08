@@ -53,6 +53,17 @@ target_link_libraries(eagleyelogcsv2kml
   kml_generator
 )
 
+add_executable(polygon
+  sample/polygon.cpp
+)
+add_dependencies(polygon
+kml_generator
+)
+target_link_libraries(polygon
+  ${catkin_LIBRARIES}
+  kml_generator
+)
+
 install(DIRECTORY include/kml_generator/
   DESTINATION include/kml_generator/
   FILES_MATCHING PATTERN "*.hpp"
