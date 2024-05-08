@@ -50,6 +50,9 @@ public:
     WHITE = 7,
   };
 
+  bool addKmlFolderBegin(const kml_utils::Header& header);
+  bool addKmlFolderEnd();
+
   bool addNavSatFixMsgVectorLine(const std::vector<sensor_msgs::NavSatFix>&, std::string data_name, int visibility,
                                  ColorType ct);
   bool addNavSatFixMsgVectorLine(const std::vector<sensor_msgs::NavSatFix>&, int visibility, ColorType ct);
@@ -100,8 +103,6 @@ private:
 
   void initKml(std::string name);
 
-  bool addKmlFolderBegin(const kml_utils::Header& header);
-  bool addKmlFolderEnd();
   bool addKmlLineHeader(std::string data_name);
   bool addKmlLineBody(std::string data_name, std::string data_str, int visibility);
   bool addKmlLineBody(const kml_utils::Line& line);
