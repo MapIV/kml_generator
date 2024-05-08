@@ -23,16 +23,23 @@ int main(int argc, char** argv)
   polygon.vertices.push_back(point3);
   polygon.vertices.push_back(point4);
 
+  KmlGenerator kml_generator(kml_file);
   std::string polygon_style_id = "polygonStyle";
   std::string polygon_line_color = "bf00ffff";
   std::string polygon_line_width = "3f00ff00";
-  KmlGenerator kml_generator(kml_file);
+  kml_generator.addPolygonStyle(polygon_style_id, polygon_line_color, polygon_line_width);
+
   kml_utils::Header boundary_folder;
   boundary_folder.name = "Boundaries";
   kml_generator.addKmlFolderBegin(boundary_folder);
-  kml_generator.addPolygonStyle(polygon_style_id, polygon_line_color, polygon_line_width);
   kml_generator.addPolygonKML(polygon, polygon_style_id);
   kml_generator.addKmlFolderEnd();
+
+  kml_utils::Header file_name_folder;
+  boundary_folder.name = "File names";
+  kml_generator.addKmlFolderBegin(file_name_folder);
+  kml_generator.addKmlFolderEnd();
+
   kml_generator.outputKml();
 
   return 0;
