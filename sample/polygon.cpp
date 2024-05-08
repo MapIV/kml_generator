@@ -18,7 +18,6 @@ int main(int argc, char** argv)
   point4.longitude = 139.71859956155666;
   kml_utils::Polygon polygon;
   polygon.header.name = "test.pcd";
-  polygon.header.description = "test polygon";
   polygon.vertices.push_back(point1);
   polygon.vertices.push_back(point2);
   polygon.vertices.push_back(point3);
@@ -28,8 +27,12 @@ int main(int argc, char** argv)
   std::string polygon_line_color = "bf00ffff";
   std::string polygon_line_width = "3f00ff00";
   KmlGenerator kml_generator(kml_file);
+  kml_utils::Header boundary_folder;
+  boundary_folder.name = "Boundaries";
+  kml_generator.addKmlFolderBegin(boundary_folder);
   kml_generator.addPolygonStyle(polygon_style_id, polygon_line_color, polygon_line_width);
   kml_generator.addPolygonKML(polygon, polygon_style_id);
+  kml_generator.addKmlFolderEnd();
   kml_generator.outputKml();
 
   return 0;
