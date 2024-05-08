@@ -471,6 +471,38 @@ bool KmlGenerator::addLinesKML(const kml_utils::Lines& lines)
   return true;
 }
 
+bool KmlGenerator::addPolygonKML(const kml_utils::Polygon& polygon, const std::string& style_name)
+{
+  std::string coords_str;
+  for (const auto& point : polygon.vertices)
+  {
+    coords_str += kml_utils::makeDouble2String(point.longitude) + "," + kml_utils::makeDouble2String(point.latitude) +
+                  "," + kml_utils::makeDouble2String(point.altitude) + " ";
+  }
+
+  body_ += "\t<Placemark>\n"
+           "\t\t<name>" +
+           polygon.header.name +
+           "</name>\n"
+           "\t\t<description>" +
+           polygon.header.description +
+           "</description>\n"
+           "\t\t<styleUrl>#" +
+           style_name +
+           "</styleUrl>\n"
+           "\t\t<Polygon>\n"
+           "\t\t\t<outerBoundaryIs>\n"
+           "\t\t\t\t<LinearRing>\n"
+           "\t\t\t\t\t<coordinates>" +
+           coords_str +
+           "</coordinates>\n"
+           "\t\t\t\t</LinearRing>\n"
+           "\t\t\t</outerBoundaryIs>\n"
+           "\t\t</Polygon>\n"
+           "\t</Placemark>\n";
+  return true;
+}
+
 bool KmlGenerator::addNavSatFixMsgVectorPoint(const std::vector<sensor_msgs::NavSatFix>& fix_msg_vector, int visibility,
                                               ColorType ct)
 {
@@ -621,6 +653,32 @@ bool KmlGenerator::addLineStyle(const std::string& data_name, const std::string&
                "</Style>\n\n";
   header_ += line_style;
 
+  return true;
+}
+
+bool KmlGenerator::addPolygonStyle(const std::string& style_name, const std::string& line_color,
+                                   const std::string& fill_color)
+{
+  std::string polygon_style;
+
+  polygon_style = "<Style id=\"" + style_name +
+                  "\">\n"
+                  "\t<LineStyle>\n"
+                  "\t\t<color> " +
+                  line_color +
+                  " </color>\n"
+                  "\t\t<width>3.00</width>\n"
+                  "\t</LineStyle>\n"
+                  "\t<PolyStyle>\n"
+                  "\t\t<color> " +
+                  fill_color +
+                  " </color>\n"
+                  "\t\t<fill>1</fill>\n"
+                  "\t\t<outline>1</outline>\n"
+                  "\t</PolyStyle>\n"
+                  "</Style>\n\n";
+
+  header_ += polygon_style;
   return true;
 }
 

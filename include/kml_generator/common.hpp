@@ -72,6 +72,13 @@ struct Lines
   Header header;
   std::vector<Line> lines;
 };
+
+struct Polygon
+{
+  Header header;
+  std::vector<Point> vertices;
+};
+
 }  // namespace kml_utils
 
 #endif
