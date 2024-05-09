@@ -72,6 +72,9 @@ public:
   bool addPolygonKML(const kml_utils::Polygon& polygon, const std::string& style_name);
   bool addPolygonStyle(const std::string& style_name, const std::string& line_color, const std::string& fill_color);
 
+  bool addLabelKML(const kml_utils::Point& point, const std::string& style_name);
+  bool addLabelStyle(const std::string& style_name, const std::string& color_code, const std::string& scale);
+
   bool outputKml();
 
   void setIntervalType(const IntervalType ip);         // IntervalType::TIME_INTERBAL or IntervalType::DISTANCE_INTERBAL

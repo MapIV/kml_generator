@@ -503,6 +503,38 @@ bool KmlGenerator::addPolygonKML(const kml_utils::Polygon& polygon, const std::s
   return true;
 }
 
+bool KmlGenerator::addLabelKML(const kml_utils::Point& point, const std::string& style_name)
+{
+  std::string coords_str = kml_utils::makeDouble2String(point.longitude) + "," +
+                           kml_utils::makeDouble2String(point.latitude) + "," +
+                           kml_utils::makeDouble2String(point.altitude);
+  std::string placemark_name;
+  for (const auto& info : point.other_info_vector)
+  {
+    if (info.name == "name")
+    {
+      placemark_name = info.value_str;
+      break;
+    }
+  }
+
+  body_ += "\t<Placemark>\n"
+           "\t\t<name>" +
+           placemark_name +
+           "</name>\n"
+           "\t\t<styleUrl>#" +
+           style_name +
+           "</styleUrl>\n"
+           "\t\t<Point>\n"
+           "\t\t\t<coordinates>" +
+           coords_str +
+           "</coordinates>\n"
+           "\t\t</Point>\n"
+           "\t</Placemark>\n";
+
+  return true;
+}
+
 bool KmlGenerator::addNavSatFixMsgVectorPoint(const std::vector<sensor_msgs::NavSatFix>& fix_msg_vector, int visibility,
                                               ColorType ct)
 {
@@ -673,12 +705,31 @@ bool KmlGenerator::addPolygonStyle(const std::string& style_name, const std::str
                   "\t\t<color> " +
                   fill_color +
                   " </color>\n"
-                  "\t\t<fill>1</fill>\n"
-                  "\t\t<outline>1</outline>\n"
                   "\t</PolyStyle>\n"
                   "</Style>\n\n";
 
   header_ += polygon_style;
+  return true;
+}
+
+bool KmlGenerator::addLabelStyle(const std::string& style_name, const std::string& color_code, const std::string& scale)
+{
+  std::string label_style;
+
+  label_style =   "<Style id=\"" + style_name +
+                  "\">\n"
+                  "\t<IconStyle>\n"
+                  "\t\t<Icon>\n"
+                  "\t\t<href/>\n"
+                  "\t\t</Icon>\n"
+                  "\t</IconStyle>\n"
+                  "\t<LabelStyle>\n"
+                  "\t\t<color>" + color_code + "</color>\n"
+                  "\t\t<scale>" + scale + "</scale>\n"
+                  "\t</LabelStyle>\n"
+                  "</Style>\n\n";
+
+  header_ += label_style;
   return true;
 }
 
