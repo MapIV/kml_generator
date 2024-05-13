@@ -13,11 +13,11 @@
 
 namespace kml_utils
 {
-void addOtherInformation(Point & point, std::string other_info_name, std::string other_info_value_str);
+void addOtherInformation(Point& point, std::string other_info_name, std::string other_info_value_str);
 
 std::string makeDouble2String(double d);
 std::string makeBool2String(bool b);
-}
+}  // namespace kml_utils
 
 class KmlGenerator
 {
@@ -50,24 +50,37 @@ public:
     WHITE = 7,
   };
 
-  bool addNavSatFixMsgVectorLine(const std::vector<sensor_msgs::NavSatFix>&, std::string data_name, int visibility, ColorType ct);
+  bool addKmlFolderBegin(const kml_utils::Header& header);
+  bool addKmlFolderEnd();
+
+  bool addNavSatFixMsgVectorLine(const std::vector<sensor_msgs::NavSatFix>&, std::string data_name, int visibility,
+                                 ColorType ct);
   bool addNavSatFixMsgVectorLine(const std::vector<sensor_msgs::NavSatFix>&, int visibility, ColorType ct);
-  bool addNavSatFixMsgVectorPoint(const std::vector<sensor_msgs::NavSatFix>&, std::string data_name, int visibility, ColorType ct);
+  bool addNavSatFixMsgVectorPoint(const std::vector<sensor_msgs::NavSatFix>&, std::string data_name, int visibility,
+                                  ColorType ct);
   bool addNavSatFixMsgVectorPoint(const std::vector<sensor_msgs::NavSatFix>&, int visibility, ColorType ct);
 
-  bool addPointVector2LineKML(const std::vector<kml_utils::Point>&, std::string data_name, int visibility, ColorType ct);
+  bool addPointVector2LineKML(const std::vector<kml_utils::Point>&, std::string data_name, int visibility,
+                              ColorType ct);
   bool addPointVector2LineKML(const std::vector<kml_utils::Point>&, int visibility, ColorType ct);
-  bool addPointVector2PointKML(const std::vector<kml_utils::Point>&, std::string data_name, int visibility, ColorType ct);
+  bool addPointVector2PointKML(const std::vector<kml_utils::Point>&, std::string data_name, int visibility,
+                               ColorType ct);
   bool addPointVector2PointKML(const std::vector<kml_utils::Point>&, int visibility, ColorType ct);
 
   bool addLinesKML(const kml_utils::Lines& lines);
 
+  bool addPolygonKML(const kml_utils::Polygon& polygon, const std::string& style_name);
+  bool addPolygonStyle(const std::string& style_name, const std::string& line_color, const std::string& fill_color);
+
+  bool addLabelKML(const kml_utils::Point& point, const std::string& style_name);
+  bool addLabelStyle(const std::string& style_name, const std::string& color_code, const std::string& scale);
+
   bool outputKml();
 
-  void setIntervalType(const IntervalType ip); // IntervalType::TIME_INTERBAL or IntervalType::DISTANCE_INTERBAL
-  void setTimeInterval(const double time_interval); // [sec]
-  void setPointInterval(const double point_interval); // [m]
-  void setLineInterval(const double line_interval); // [m]
+  void setIntervalType(const IntervalType ip);         // IntervalType::TIME_INTERBAL or IntervalType::DISTANCE_INTERBAL
+  void setTimeInterval(const double time_interval);    // [sec]
+  void setPointInterval(const double point_interval);  // [m]
+  void setLineInterval(const double line_interval);    // [m]
   IntervalType getIntervalType();
   double getTimeInterval();
   double getPointInterval();
@@ -83,29 +96,28 @@ private:
   std::string footer_;
   int data_count_ = 0;
 
-  IntervalType interval_type_ = IntervalType::TIME_INTERBAL; // time : 0, distance: 1
+  IntervalType interval_type_ = IntervalType::TIME_INTERBAL;  // time : 0, distance: 1
   KMLType kml_type_;
   std::string data_name_;
   ColorType color_type_;
-  double time_interval_ = 0.2; // [sec]
-  double point_interval_ = 5.0; // [m]
-  double line_interval_ = 1.0; // [m]
+  double time_interval_ = 0.2;   // [sec]
+  double point_interval_ = 5.0;  // [m]
+  double line_interval_ = 1.0;   // [m]
 
   void initKml(std::string name);
 
-  bool addKmlFolderBegin(const kml_utils::Header& header);
-  bool addKmlFolderEnd();
   bool addKmlLineHeader(std::string data_name);
   bool addKmlLineBody(std::string data_name, std::string data_str, int visibility);
   bool addKmlLineBody(const kml_utils::Line& line);
   bool addKmlPointBody(std::string data_name, std::string data_str, int visibility);
 
-  void LLH2StringInCondition(std::string & str,double & time_last, double ecef_pose_last[3],
-  const double time, double llh[3], int seq, double ecef_base_pose[3], std::vector<kml_utils::OtherInfo> other_info_vector);
+  void LLH2StringInCondition(std::string& str, double& time_last, double ecef_pose_last[3], const double time,
+                             double llh[3], int seq, double ecef_base_pose[3],
+                             std::vector<kml_utils::OtherInfo> other_info_vector);
 
   std::string NavSatFixMsgVector2LineStr(const std::vector<sensor_msgs::NavSatFix>&);
-  std::string LLHTimeSeq2PointStr(const int seq,const double time, double llh[3], const int sequence,
-    std::vector<kml_utils::OtherInfo> other_info_vector);
+  std::string LLHTimeSeq2PointStr(const int seq, const double time, double llh[3], const int sequence,
+                                  std::vector<kml_utils::OtherInfo> other_info_vector);
   std::string NavSatFixMsgVector2PointStr(const std::vector<sensor_msgs::NavSatFix>&, std::string data_name);
 
   std::string PointVector2LineStr(const std::vector<kml_utils::Point>&);

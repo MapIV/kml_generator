@@ -29,8 +29,8 @@ constexpr const char* line_style_white = "LineStyleWHITE";
 
 struct OtherInfo
 {
-  std::string name; // ex) name = "Velocity Scale Factor"
-  std::string value_str; // ex) value_str = "0.987684"
+  std::string name;       // ex) name = "Velocity Scale Factor"
+  std::string value_str;  // ex) value_str = "0.987684"
 };
 
 struct Header
@@ -41,11 +41,11 @@ struct Header
 
 struct Point
 {
-  int seq = 0; // [sequence number]
-  double time;      // [sec]
-  double latitude;  // [deg]
-  double longitude; // [deg]
-  double altitude;  // [m]
+  int seq = 0;       // [sequence number]
+  double time;       // [sec]
+  double latitude;   // [deg]
+  double longitude;  // [deg]
+  double altitude;   // [m]
 
   std::vector<OtherInfo> other_info_vector;
 };
@@ -56,7 +56,9 @@ struct Line
   std::vector<Point> points;
   ColorType color;
 
-  Line() {}
+  Line()
+  {
+  }
   Line(const std::string& name, const std::string& description, const ColorType color)
   {
     header.name = name;
@@ -70,6 +72,13 @@ struct Lines
   Header header;
   std::vector<Line> lines;
 };
-}
+
+struct Polygon
+{
+  Header header;
+  std::vector<Point> vertices;
+};
+
+}  // namespace kml_utils
 
 #endif
