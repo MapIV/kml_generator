@@ -6,8 +6,7 @@
 #include <iostream>
 #include <fstream>
 #include <iomanip>
-
-#include <sensor_msgs/NavSatFix.h>
+#include <cmath>
 
 #include "kml_generator/common.hpp"
 
@@ -52,13 +51,6 @@ public:
 
   bool addKmlFolderBegin(const kml_utils::Header& header);
   bool addKmlFolderEnd();
-
-  bool addNavSatFixMsgVectorLine(const std::vector<sensor_msgs::NavSatFix>&, std::string data_name, int visibility,
-                                 ColorType ct);
-  bool addNavSatFixMsgVectorLine(const std::vector<sensor_msgs::NavSatFix>&, int visibility, ColorType ct);
-  bool addNavSatFixMsgVectorPoint(const std::vector<sensor_msgs::NavSatFix>&, std::string data_name, int visibility,
-                                  ColorType ct);
-  bool addNavSatFixMsgVectorPoint(const std::vector<sensor_msgs::NavSatFix>&, int visibility, ColorType ct);
 
   bool addPointVector2LineKML(const std::vector<kml_utils::Point>&, std::string data_name, int visibility,
                               ColorType ct);
@@ -115,10 +107,8 @@ private:
                              double llh[3], int seq, double ecef_base_pose[3],
                              std::vector<kml_utils::OtherInfo> other_info_vector);
 
-  std::string NavSatFixMsgVector2LineStr(const std::vector<sensor_msgs::NavSatFix>&);
   std::string LLHTimeSeq2PointStr(const int seq, const double time, double llh[3], const int sequence,
                                   std::vector<kml_utils::OtherInfo> other_info_vector);
-  std::string NavSatFixMsgVector2PointStr(const std::vector<sensor_msgs::NavSatFix>&, std::string data_name);
 
   std::string PointVector2LineStr(const std::vector<kml_utils::Point>&);
   std::string PointVector2PointStr(const std::vector<kml_utils::Point>&, std::string data_name);

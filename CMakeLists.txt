@@ -1,76 +1,28 @@
-cmake_minimum_required(VERSION 2.8.3)
+cmake_minimum_required(VERSION 3.14)
 project(kml_generator)
 
-# Enable support for C++11
-if (${CMAKE_VERSION} VERSION_LESS "3.1.0")
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
-else ()
-  set(CMAKE_CXX_STANDARD 11)
-endif ()
+find_package(ament_cmake_auto REQUIRED)
 
-find_package(catkin REQUIRED COMPONENTS
-  sensor_msgs
-)
+ament_auto_find_build_dependencies()
 
-catkin_package(
-  CATKIN_DEPENDS sensor_msgs
-  INCLUDE_DIRS include
-  LIBRARIES kml_generator
-)
+if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+  add_compile_options(-Wall -Wextra -Wpedantic -Wunused-function)
+endif()
+
+if(NOT CMAKE_CXX_STANDARD)
+  set(CMAKE_CXX_STANDARD 20)
+endif()
+
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 include_directories(
   include
-  ${catkin_INCLUDE_DIRS}
 )
 
-add_library(kml_generator
+ament_auto_add_library(kml_generator STATIC
   src/kml_generator/kml_generator_core.cpp
   src/kml_generator/coordinate_transformation.cpp
 )
-target_link_libraries(kml_generator ${catkin_LIBRARIES})
-add_dependencies(kml_generator ${catkin_EXPORTED_TARGETS})
+ament_export_include_directories("include/kml_generator")
 
-
-add_executable(fixcsv2kml
-  sample/fixcsv2kml.cpp
-)
-add_dependencies(fixcsv2kml
-  kml_generator
-)
-target_link_libraries(fixcsv2kml
-  ${catkin_LIBRARIES}
-  kml_generator
-)
-
-add_executable(eagleyelogcsv2kml
-  sample/eagleyelogcsv2kml.cpp
-)
-add_dependencies(eagleyelogcsv2kml
-kml_generator
-)
-target_link_libraries(eagleyelogcsv2kml
-  ${catkin_LIBRARIES}
-  kml_generator
-)
-
-add_executable(polygon
-  sample/polygon.cpp
-)
-add_dependencies(polygon
-kml_generator
-)
-target_link_libraries(polygon
-  ${catkin_LIBRARIES}
-  kml_generator
-)
-
-install(DIRECTORY include/kml_generator/
-  DESTINATION include/kml_generator/
-  FILES_MATCHING PATTERN "*.hpp"
-)
-
-install(TARGETS kml_generator
-  ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-  LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-  RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
-)
+ament_auto_package()

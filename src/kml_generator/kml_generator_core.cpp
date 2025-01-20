@@ -264,28 +264,6 @@ void KmlGenerator::LLH2StringInCondition(std::string& str, double& time_last, do
   return;
 }
 
-std::string KmlGenerator::NavSatFixMsgVector2LineStr(const std::vector<sensor_msgs::NavSatFix>& fix_msg_vector)
-{
-  std::stringstream data_ss;
-  std::size_t data_length = fix_msg_vector.size();
-
-  double time_last = 0;
-  double ecef_pose_last[3] = { 0, 0, 0 };
-  double ecef_base_pose[3] = { 0, 0, 0 };
-  for (int i = 0; i < data_length; i++)
-  {
-    std::vector<kml_utils::OtherInfo> other_info_vector;
-    double time = fix_msg_vector[i].header.stamp.toSec();
-    double llh[3] = { fix_msg_vector[i].latitude, fix_msg_vector[i].longitude, fix_msg_vector[i].altitude };
-    int seq = fix_msg_vector[i].header.seq;
-    std::string str;
-    LLH2StringInCondition(str, time_last, ecef_pose_last, time, llh, seq, ecef_base_pose, other_info_vector);
-    data_ss << str;
-  }
-
-  return data_ss.str();
-}
-
 std::string KmlGenerator::PointVector2LineStr(const std::vector<kml_utils::Point>& point_vector)
 {
   std::stringstream data_ss;
@@ -350,29 +328,6 @@ std::string KmlGenerator::LLHTimeSeq2PointStr(const int seq, const double time, 
   return data;
 }
 
-std::string KmlGenerator::NavSatFixMsgVector2PointStr(const std::vector<sensor_msgs::NavSatFix>& fix_msg_vector,
-                                                      std::string data_name)
-{
-  std::string data;
-  std::size_t data_length = std::distance(fix_msg_vector.begin(), fix_msg_vector.end());
-
-  double time_last = 0;
-  double ecef_pose_last[3] = { 0, 0, 0 };
-  double ecef_base_pose[3] = { 0, 0, 0 };
-  for (int i = 0; i < data_length; i++)
-  {
-    std::vector<kml_utils::OtherInfo> other_info_vector;
-    double time = fix_msg_vector[i].header.stamp.toSec();
-    double llh[3] = { fix_msg_vector[i].latitude, fix_msg_vector[i].longitude, fix_msg_vector[i].altitude };
-    int seq = fix_msg_vector[i].header.seq;
-    std::string str;
-    LLH2StringInCondition(str, time_last, ecef_pose_last, time, llh, seq, ecef_base_pose, other_info_vector);
-    data += str;
-  }
-
-  return data;
-}
-
 std::string KmlGenerator::PointVector2PointStr(const std::vector<kml_utils::Point>& point_vector, std::string data_name)
 {
   std::string data;
@@ -393,34 +348,6 @@ std::string KmlGenerator::PointVector2PointStr(const std::vector<kml_utils::Poin
   }
 
   return data;
-}
-
-bool KmlGenerator::addNavSatFixMsgVectorLine(const std::vector<sensor_msgs::NavSatFix>& fix_msg_vector, int visibility,
-                                             ColorType ct)
-{
-  std::string data_str = NavSatFixMsgVector2LineStr(fix_msg_vector);
-  std::string data_name;
-
-  data_name = "DATANUM_" + std::to_string(data_count_);
-
-  return addNavSatFixMsgVectorLine(fix_msg_vector, data_name, visibility, ct);
-}
-
-bool KmlGenerator::addNavSatFixMsgVectorLine(const std::vector<sensor_msgs::NavSatFix>& fix_msg_vector,
-                                             std::string data_name, int visibility, ColorType ct)
-{
-  kml_type_ = KMLType::LINE;
-  color_type_ = ct;
-
-  data_name.erase(std::remove(data_name.begin(), data_name.end(), ' '), data_name.end());
-  std::string data_str = NavSatFixMsgVector2LineStr(fix_msg_vector);
-
-  data_count_++;
-  if (!addKmlLineHeader(data_name))
-    return false;
-  if (!addKmlLineBody(data_name, data_str, visibility))
-    return false;
-  return true;
 }
 
 bool KmlGenerator::addPointVector2LineKML(const std::vector<kml_utils::Point>& point_vector, int visibility,
@@ -532,34 +459,6 @@ bool KmlGenerator::addLabelKML(const kml_utils::Point& point, const std::string&
            "\t\t</Point>\n"
            "\t</Placemark>\n";
 
-  return true;
-}
-
-bool KmlGenerator::addNavSatFixMsgVectorPoint(const std::vector<sensor_msgs::NavSatFix>& fix_msg_vector, int visibility,
-                                              ColorType ct)
-{
-  std::string data_name;
-
-  data_name = "DATANUM_" + std::to_string(data_count_);
-
-  return addNavSatFixMsgVectorPoint(fix_msg_vector, data_name, visibility, ct);
-}
-
-bool KmlGenerator::addNavSatFixMsgVectorPoint(const std::vector<sensor_msgs::NavSatFix>& fix_msg_vector,
-                                              std::string data_name, int visibility, ColorType ct)
-{
-  kml_type_ = KMLType::POINT;
-  color_type_ = ct;
-
-  data_name.erase(std::remove(data_name.begin(), data_name.end(), ' '), data_name.end());
-  data_name_ = data_name;
-
-  data_count_++;
-
-  std::string data_str = NavSatFixMsgVector2PointStr(fix_msg_vector, data_name);
-
-  if (!addKmlPointBody(data_name, data_str, visibility))
-    return false;
   return true;
 }
 
