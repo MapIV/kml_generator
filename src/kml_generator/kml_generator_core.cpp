@@ -10,11 +10,10 @@ void addOtherInformation(Point& point, std::string other_info_name, std::string 
   point.other_info_vector.push_back(other_info);
 };
 
-std::string makeDouble2String(double d)
+std::string makeDouble2String(double d, int precision)
 {
   std::stringstream s;
-  s.precision(std::numeric_limits<double>::max_digits10);
-  s << std::scientific << d;
+  s << std::fixed << std::setprecision(precision) << d;
   return s.str();
 }
 
@@ -246,9 +245,9 @@ void KmlGenerator::LLH2StringInCondition(std::string& str, double& time_last, do
     if (kml_type_ == KMLType::LINE)
     {
       std::stringstream data_ss;
-      data_ss << std::setprecision(std::numeric_limits<double>::max_digits10) << llh[1] << ","
-              << std::setprecision(std::numeric_limits<double>::max_digits10) << llh[0] << ","
-              << std::setprecision(std::numeric_limits<double>::max_digits10) << llh[2] << std::endl;
+      data_ss << std::fixed << std::setprecision(8) << llh[1] << ","
+              << std::fixed << std::setprecision(8) << llh[0] << ","
+              << std::fixed << std::setprecision(3) << llh[2] << std::endl;
       str = data_ss.str();
     }
     else if (kml_type_ == KMLType::POINT)
@@ -298,14 +297,14 @@ std::string KmlGenerator::LLHTimeSeq2PointStr(const int seq, const double time, 
                 \t\t\t\t<TR ALIGN=RIGHT>\n\
                 \t\t\t\t<TR ALIGN=RIGHT><TD ALIGN=LEFT>Sequence Number: </TD><TD>" +
          std::to_string(sequence) + "</TD></TR>\n" +
-         "\t\t\t\t\t\t\t\t<TR ALIGN=RIGHT><TD ALIGN=LEFT>Timestamp: </TD><TD>" + kml_utils::makeDouble2String(time) +
+         "\t\t\t\t\t\t\t\t<TR ALIGN=RIGHT><TD ALIGN=LEFT>Timestamp: </TD><TD>" + kml_utils::makeDouble2String(time, 2) +
          "</TD></TR>\n\
                  \t\t\t\t<TR ALIGN=RIGHT><TD ALIGN=LEFT>lat: </TD><TD>" +
-         kml_utils::makeDouble2String(llh[0]) + "</TD></TR>\n\
+         kml_utils::makeDouble2String(llh[0], 8) + "</TD></TR>\n\
                 \t\t\t\t<TR ALIGN=RIGHT><TD ALIGN=LEFT>lon: </TD><TD>" +
-         kml_utils::makeDouble2String(llh[1]) + "</TD></TR>\n\
+         kml_utils::makeDouble2String(llh[1], 8) + "</TD></TR>\n\
                 \t\t\t\t<TR ALIGN=RIGHT><TD ALIGN=LEFT>height: </TD><TD>" +
-         kml_utils::makeDouble2String(llh[2]) + "</TD></TR>\n";
+         kml_utils::makeDouble2String(llh[2], 3) + "</TD></TR>\n";
   if (!other_info_vector.empty())
   {
     for (kml_utils::OtherInfo oi : other_info_vector)
@@ -320,8 +319,8 @@ std::string KmlGenerator::LLHTimeSeq2PointStr(const int seq, const double time, 
           +"</styleUrl>\n"
            "\t\t<Point>\n"
            "t\t\t<coordinates>" +
-          kml_utils::makeDouble2String(llh[1]) + "," + kml_utils::makeDouble2String(llh[0]) + "," +
-          kml_utils::makeDouble2String(llh[2]) + "," +
+          kml_utils::makeDouble2String(llh[1], 8) + "," + kml_utils::makeDouble2String(llh[0], 8) + "," +
+          kml_utils::makeDouble2String(llh[2], 3) + "," +
           "</coordinates>\n"
           "\t\t</Point>\n"
           "\t</Placemark>";
@@ -403,8 +402,8 @@ bool KmlGenerator::addPolygonKML(const kml_utils::Polygon& polygon, const std::s
   std::string coords_str;
   for (const auto& point : polygon.vertices)
   {
-    coords_str += kml_utils::makeDouble2String(point.longitude) + "," + kml_utils::makeDouble2String(point.latitude) +
-                  "," + kml_utils::makeDouble2String(point.altitude) + " ";
+    coords_str += kml_utils::makeDouble2String(point.longitude, 8) + "," + kml_utils::makeDouble2String(point.latitude, 8) +
+                  "," + kml_utils::makeDouble2String(point.altitude, 3) + " ";
   }
 
   body_ += "\t<Placemark>\n"
@@ -432,9 +431,9 @@ bool KmlGenerator::addPolygonKML(const kml_utils::Polygon& polygon, const std::s
 
 bool KmlGenerator::addLabelKML(const kml_utils::Point& point, const std::string& style_name)
 {
-  std::string coords_str = kml_utils::makeDouble2String(point.longitude) + "," +
-                           kml_utils::makeDouble2String(point.latitude) + "," +
-                           kml_utils::makeDouble2String(point.altitude);
+  std::string coords_str = kml_utils::makeDouble2String(point.longitude, 8) + "," +
+                           kml_utils::makeDouble2String(point.latitude, 8) + "," +
+                           kml_utils::makeDouble2String(point.altitude, 3);
   std::string placemark_name;
   for (const auto& info : point.other_info_vector)
   {

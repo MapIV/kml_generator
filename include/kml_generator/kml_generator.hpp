@@ -14,7 +14,7 @@ namespace kml_utils
 {
 void addOtherInformation(Point& point, std::string other_info_name, std::string other_info_value_str);
 
-std::string makeDouble2String(double d);
+std::string makeDouble2String(double d, int precision = 10);
 std::string makeBool2String(bool b);
 }  // namespace kml_utils
 
