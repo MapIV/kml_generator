@@ -5,7 +5,9 @@
 #include <string>
 #include <iostream>
 #include <fstream>
+#include <sstream>
 #include <iomanip>
+#define _USE_MATH_DEFINES
 #include <cmath>
 
 #include "kml_generator/common.hpp"
