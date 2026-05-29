@@ -1,4 +1,5 @@
 #include <kml_generator/kml_generator.hpp>
+#include <numbers>
 
 namespace kml_utils
 {
@@ -215,7 +216,7 @@ void KmlGenerator::LLH2StringInCondition(std::string& str, double& time_last, do
   }
   else if (interval_type_ == IntervalType::DISTANCE_INTERBAL)
   {
-    double llh_pos[3] = { llh[0] * M_PI / 180, llh[1] * M_PI / 180, llh[2] * M_PI / 180 };
+    double llh_pos[3] = { llh[0] * std::numbers::pi / 180, llh[1] * std::numbers::pi / 180, llh[2] * std::numbers::pi / 180 };
     llh2xyz(llh_pos, ecef_pose);
 
     if (ecef_pose_last[0] == 0 && ecef_pose_last[1] == 0 && ecef_pose_last[2] == 0)
