@@ -578,7 +578,7 @@ bool KmlGenerator::addLineStyle(const std::string& data_name, const std::string&
                "\t\t<color> " +
                color_code +
                " </color>\n"
-               "\t\t<width>5.00</width>\n"
+               "\t\t<width>3.00</width>\n"
                "\t</LineStyle>\n"
                "</Style>\n\n";
   header_ += line_style;
