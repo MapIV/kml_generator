@@ -14,6 +14,7 @@ if(NOT CMAKE_CXX_STANDARD)
 endif()
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
 include_directories(
   include
